@@ -25,4 +25,29 @@ npm publish
 ```
 
 That's it!
- 
+
+---
+
+## Link package to test app
+
+From the test dir (`./my-project`) run
+
+```shell
+npm link ../
+```
+
+## Development
+
+Changes will be applied to test app at `./my-project`
+
+In one shell run:
+
+```shell
+npm run build
+```
+
+In another terminal run:
+
+```shell
+npm run launch
+```

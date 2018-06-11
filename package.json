@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json -w",
     "build:once": "tsc -p tsconfig.json",
+    "build:launch": "npm run build:once && npm run launch",
     "clean:testApp": "git checkout HEAD -- test-app && git clean -f -d",
     "test": "npm run build:once && jasmine src/**/*_spec.js",
     "link": "cd test-app && npm link ../",

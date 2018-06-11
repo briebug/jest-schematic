@@ -3,91 +3,44 @@ import {
   SchematicContext,
   Tree,
   chain,
-  externalSchematic,
+  SchematicsException,
 } from '@angular-devkit/schematics';
+import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
-const licenseText = `
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-`;
+import { JestOptions } from './utility/util';
+import {
+  getPackageJsonDependency,
+  addPackageJsonDependency,
+} from './utility/dependencies';
 
-// You don't have to export the function as default. You can also have more than one rule factory
-// per file.
-export function addJest(options: any): Rule {
+export function addJest(options: JestOptions): Rule {
   return chain([
-    externalSchematic('@schematics/angular', 'component', options),
-    writeLicenseToHeader(options),
+    updateDependencies(options),
+    // writeLicenseToHeader(options),
   ]);
 }
 
-function writeLicenseToHeader(options: any): Rule {
-  return (tree: Tree, _context: SchematicContext) => {
+function updateDependencies(options: JestOptions): Rule {
+  if (options) {
+  }
+  return (tree: Tree, context: SchematicContext) => {
+    context.addTask(new NodePackageInstallTask());
+    context.logger.debug('Adding Jest dependency...');
 
-    const workspace = getWorkspace(tree);
-    if (!options.project) {
-      throw new SchematicsException('Option "project" is required.');
+    const coreDep = getPackageJsonDependency(tree, '@angular/core');
+    if (coreDep === null) {
+      throw new SchematicsException('Could not find version.');
     }
-    const project = workspace.projects[options.project];
-    if (project.projectType !== 'application') {
-      throw new SchematicsException(`PWA requires a project type of "application".`);
-    }
 
-    // const assetPath = join(project.root as Path, 'src', 'assets');
-    const sourcePath = join(project.root as Path, 'src');;
+    const packageName = '@types/jest';
+    // const packageNames = ['@types/jest', 'jest', 'jest-preset-angular'];
 
-    console.log('sourcePath -> ', sourcePath);
+    const platformServerDep = {
+      ...coreDep,
+      name: packageName,
+    };
+    addPackageJsonDependency(tree, platformServerDep);
 
-    tree.getDir(`${sourcePath}/app/${options.name}`).visit((filePath) => {
-      if (!filePath.endsWith('.ts')) {
-        return;
-      }
-      const content = tree.read(filePath);
-      if (!content) {
-        return;
-      }
-      // Prevent from writing license to files tha already have one
-      if (content.indexOf(licenseText) == -1) {
-        tree.overwrite(filePath, licenseText + content);
-      }
-    });
     return tree;
   };
-}
-
-// -------------------------
-
-/**
- * @license
- * Copyright Google Inc. All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-import { JsonParseMode, experimental, parseJson, join, Path } from '@angular-devkit/core';
-import { SchematicsException } from '@angular-devkit/schematics';
-
-
-export type WorkspaceSchema = experimental.workspace.WorkspaceSchema;
-
-export function getWorkspacePath(host: Tree): string {
-  const possibleFiles = [ '/angular.json', '/.angular.json' ];
-  const path = possibleFiles.filter(path => host.exists(path))[0];
-
-  return path;
-}
-
-export function getWorkspace(host: Tree): WorkspaceSchema {
-  const path = getWorkspacePath(host);
-  const configBuffer = host.read(path);
-  if (configBuffer === null) {
-    throw new SchematicsException(`Could not find (${path})`);
-  }
-  const content = configBuffer.toString();
-
-  return parseJson(content, JsonParseMode.Loose) as {} as WorkspaceSchema;
 }

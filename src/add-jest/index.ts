@@ -3,21 +3,17 @@ import {
   SchematicContext,
   Tree,
   chain,
-  SchematicsException,
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
 import { JestOptions } from './utility/util';
 import {
-  getPackageJsonDependency,
   addPackageJsonDependency,
+  NodeDependencyType,
 } from './utility/dependencies';
 
 export function addJest(options: JestOptions): Rule {
-  return chain([
-    updateDependencies(options),
-    // writeLicenseToHeader(options),
-  ]);
+  return chain([updateDependencies(options)]);
 }
 
 function updateDependencies(options: JestOptions): Rule {
@@ -27,19 +23,21 @@ function updateDependencies(options: JestOptions): Rule {
     context.addTask(new NodePackageInstallTask());
     context.logger.debug('Adding Jest dependency...');
 
-    const coreDep = getPackageJsonDependency(tree, '@angular/core');
-    if (coreDep === null) {
-      throw new SchematicsException('Could not find version.');
-    }
+    [
+      ['@types/jest', '6.0.3'],
+      ['jest', '23.1.0'],
+      ['jest-preset-angular', '5.2.2'],
+    ].forEach((dependency) => {
+      const [packageName, version] = dependency;
+      const jestDep = {
+        type: NodeDependencyType.Dev,
+        name: packageName,
+        version: version ? version : '',
+      };
 
-    const packageName = '@types/jest';
-    // const packageNames = ['@types/jest', 'jest', 'jest-preset-angular'];
-
-    const platformServerDep = {
-      ...coreDep,
-      name: packageName,
-    };
-    addPackageJsonDependency(tree, platformServerDep);
+      context.logger.debug(`Adding ${packageName}...`);
+      addPackageJsonDependency(tree, jestDep);
+    });
 
     return tree;
   };

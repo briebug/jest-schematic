@@ -6,16 +6,22 @@
  * found in the LICENSE file at https://angular.io/license
  * https://github.com/angular/angular-cli/blob/master/packages/schematics/angular/utility/dependencies.ts
  */
-import { JsonAstObject, JsonParseMode, parseJsonAst } from '@angular-devkit/core';
+import {
+  JsonAstObject,
+  JsonParseMode,
+  parseJsonAst,
+} from '@angular-devkit/core';
 import { SchematicsException, Tree } from '@angular-devkit/schematics';
 import {
   appendPropertyInAstObject,
   findPropertyInAstObject,
   insertPropertyInAstObjectInOrder,
- } from './json-utils';
+} from './json-utils';
 
+export enum pkgJson {
+  Path = '/package.json'
+}
 
-const pkgJsonPath = '/package.json';
 export enum NodeDependencyType {
   Default = 'dependencies',
   Dev = 'devDependencies',
@@ -30,15 +36,29 @@ export interface NodeDependency {
   overwrite?: boolean;
 }
 
-export function addPackageJsonDependency(tree: Tree, dependency: NodeDependency): void {
-  const packageJsonAst = _readPackageJson(tree);
+export interface DeleteNodeDependency {
+  type: NodeDependencyType,
+  name: string
+}
+
+export function addPackageJsonDependency(
+  tree: Tree,
+  dependency: NodeDependency
+): void {
+  const packageJsonAst = readPackageJson(tree);
   const depsNode = findPropertyInAstObject(packageJsonAst, dependency.type);
-  const recorder = tree.beginUpdate(pkgJsonPath);
+  const recorder = tree.beginUpdate(pkgJson.Path);
   if (!depsNode) {
     // Haven't found the dependencies key, add it to the root of the package.json.
-    appendPropertyInAstObject(recorder, packageJsonAst, dependency.type, {
-      [dependency.name]: dependency.version,
-    }, 4);
+    appendPropertyInAstObject(
+      recorder,
+      packageJsonAst,
+      dependency.type,
+      {
+        [dependency.name]: dependency.version,
+      },
+      4
+    );
   } else if (depsNode.kind === 'object') {
     // check if package already added
     const depNode = findPropertyInAstObject(depsNode, dependency.name);
@@ -50,7 +70,7 @@ export function addPackageJsonDependency(tree: Tree, dependency: NodeDependency)
         depsNode,
         dependency.name,
         dependency.version,
-        4,
+        4
       );
     } else if (dependency.overwrite) {
       // Package found, update version if overwrite.
@@ -63,15 +83,18 @@ export function addPackageJsonDependency(tree: Tree, dependency: NodeDependency)
   tree.commitUpdate(recorder);
 }
 
-export function getPackageJsonDependency(tree: Tree, name: string): NodeDependency | null {
-  const packageJson = _readPackageJson(tree);
+export function getPackageJsonDependency(
+  tree: Tree,
+  name: string
+): NodeDependency | null {
+  const packageJson = readPackageJson(tree);
   let dep: NodeDependency | null = null;
   [
     NodeDependencyType.Default,
     NodeDependencyType.Dev,
     NodeDependencyType.Optional,
     NodeDependencyType.Peer,
-  ].forEach(depType => {
+  ].forEach((depType) => {
     if (dep !== null) {
       return;
     }
@@ -92,8 +115,8 @@ export function getPackageJsonDependency(tree: Tree, name: string): NodeDependen
   return dep;
 }
 
-function _readPackageJson(tree: Tree): JsonAstObject {
-  const buffer = tree.read(pkgJsonPath);
+export function readPackageJson(tree: Tree): JsonAstObject {
+  const buffer = tree.read(pkgJson.Path);
   if (buffer === null) {
     throw new SchematicsException('Could not read package.json.');
   }
@@ -101,7 +124,9 @@ function _readPackageJson(tree: Tree): JsonAstObject {
 
   const packageJson = parseJsonAst(content, JsonParseMode.Strict);
   if (packageJson.kind != 'object') {
-    throw new SchematicsException('Invalid package.json. Was expecting an object');
+    throw new SchematicsException(
+      'Invalid package.json. Was expecting an object'
+    );
   }
 
   return packageJson;

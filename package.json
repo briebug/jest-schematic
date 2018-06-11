@@ -6,7 +6,7 @@
     "build": "tsc -p tsconfig.json -w",
     "build:once": "tsc -p tsconfig.json",
     "test": "npm run build && jasmine src/**/*_spec.js",
-    "debug": "node --inspect-brk $(which schematics) .:blank-schematic",
+    "debug": "echo \"debug not working with @angular/schematics\n> node --inspect-brk $(which schematics) .:blank-schematic\"",
     "launch": "cd my-project && ng g blank-schematic:blank-schematic --project=my-project --name=test"
   },
   "keywords": [

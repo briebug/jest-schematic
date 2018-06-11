@@ -1,9 +1,9 @@
 {
   "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
-    "blank-schematic": {
-      "description": "A blank schematic.",
-      "factory": "./blank-schematic/index#blankSchematic"
+    "add-jest": {
+      "description": "Add jest to an Angular CLI app.",
+      "factory": "./add-jest/index#addJest"
     }
   }
 }

@@ -18,7 +18,7 @@ const licenseText = `
 
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
-export function blankSchematic(options: any): Rule {
+export function addJest(options: any): Rule {
   return chain([
     externalSchematic('@schematics/angular', 'component', options),
     writeLicenseToHeader(options),

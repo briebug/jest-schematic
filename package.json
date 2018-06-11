@@ -1,13 +1,14 @@
 {
-  "name": "blank-schematic",
+  "name": "add-jest",
   "version": "1.0.0",
-  "description": "A blank schematics",
+  "description": "Add jest to an Angular CLI project",
   "scripts": {
     "build": "tsc -p tsconfig.json -w",
     "build:once": "tsc -p tsconfig.json",
     "test": "npm run build && jasmine src/**/*_spec.js",
-    "debug": "echo \"debug not working with @angular/schematics\n> node --inspect-brk $(which schematics) .:blank-schematic\"",
-    "launch": "cd test-app && ng g blank-schematic:blank-schematic --project=test-app --name=test"
+    "link": "cd test-app && npm link ../",
+    "debug": "echo \"debug not working with @angular/schematics\n> node --inspect-brk $(which schematics) .:addJest\"",
+    "launch": "cd test-app && ng g add-jest:add-jest --project=test-app --name=test"
   },
   "keywords": [
     "schematics"

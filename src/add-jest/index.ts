@@ -22,10 +22,10 @@ function updateDependencies(options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
     const removeDependencies = [
       'karma',
-      // 'karma-jasmine',
-      // 'karma-jasmine-html-reporter',
-      // 'karma-chrome-launcher',
-      // 'karma-coverage-istanbul-reporter',
+      'karma-jasmine',
+      'karma-jasmine-html-reporter',
+      'karma-chrome-launcher',
+      'karma-coverage-istanbul-reporter',
     ];
     const addJestDependencies = [
       ['@types/jest', '6.0.3'],

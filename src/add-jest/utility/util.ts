@@ -67,7 +67,6 @@ export function removePackageJsonDependency(
     // Haven't found the dependencies key.
     new SchematicsException('Could not find the package.json dependency');
   } else if (depsNode.kind === 'object') {
-    // check if package exists
     const fullPackageString = depsNode.text
       .split('\n')
       .filter((pkg) => {
@@ -80,12 +79,13 @@ export function removePackageJsonDependency(
       (node) => node.key.value === dependency.name
     );
 
-    // TODO: does this work for last dependency?
+    // TODO: does this work for the last dependency?
     const newLineIndentation = 5;
 
     if (packageAst) {
-      const end = packageAst.end.offset + commaDangle;
       // Package found, remove it.
+      const end = packageAst.end.offset + commaDangle;
+
       recorder.remove(
         packageAst.key.start.offset,
         end - packageAst.start.offset + newLineIndentation

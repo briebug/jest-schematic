@@ -6,7 +6,7 @@
     "build": "tsc -p tsconfig.json -w",
     "build:once": "tsc -p tsconfig.json",
     "clean:testApp": "git checkout HEAD -- test-app && git clean -f -d",
-    "test": "npm run build && jasmine src/**/*_spec.js",
+    "test": "npm run build:once && jasmine src/**/*_spec.js",
     "link": "cd test-app && npm link ../",
     "debug": "echo \"debug not working with @angular/schematics\n> node --inspect-brk $(which schematics) .:addJest\"",
     "launch": "cd test-app && ng g add-jest:add-jest --project=test-app --name=test"

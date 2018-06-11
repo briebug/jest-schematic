@@ -79,13 +79,16 @@ export function removePackageJsonDependency(
     const packageAst = depsNode.properties.find(
       (node) => node.key.value === dependency.name
     );
-    const newLineIndentation = 5
+
+    // TODO: does this work for last dependency?
+    const newLineIndentation = 5;
 
     if (packageAst) {
+      const end = packageAst.end.offset + commaDangle;
       // Package found, remove it.
       recorder.remove(
         packageAst.key.start.offset,
-        (packageAst.end.offset + commaDangle) - packageAst.start.offset + newLineIndentation
+        end - packageAst.start.offset + newLineIndentation
       );
     }
   }

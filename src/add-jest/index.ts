@@ -3,6 +3,7 @@ import {
   SchematicContext,
   Tree,
   chain,
+  url,
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
@@ -11,6 +12,7 @@ import {
   getWorkspace,
   JestOptions,
   getWorkspacePath,
+  safeFileDelete,
 } from './utility/util';
 
 import {
@@ -86,9 +88,6 @@ function cleanAngularJson(options: JestOptions): Rule {
       // remove test default ng test configuration
       delete project.architect.test;
 
-      // const recorder = tree.beginUpdate(Paths.AngularJson);
-      console.log('angular json-> ', JSON.stringify(workspace, null, 2));
-
       tree.overwrite(workspacePath, JSON.stringify(workspace, null, 2));
     }
     return tree;
@@ -96,7 +95,21 @@ function cleanAngularJson(options: JestOptions): Rule {
 }
 
 function removeFiles(): Rule {
-  return (tree: Tree) => {
+  return (tree: Tree, context: SchematicContext) => {
+    const deleteFiles = ['./src/karma.conf.js', './src/test.ts'];
+
+    deleteFiles.forEach((filePath) => {
+      context.logger.debug(`removing ${filePath}`);
+
+      const didDelete = safeFileDelete(tree, filePath);
+
+      if (!didDelete) {
+        context.logger.info(
+          `Warning: attempted to remove the CLI original ${filePath} file.This file is no longer necessary for testing if it has been renamed.`
+        );
+      }
+    });
+
     return tree;
   };
 }

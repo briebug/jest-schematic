@@ -6,19 +6,17 @@ import {
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
-import { JestOptions, removePackageJsonDependency } from './utility/util';
+import { removePackageJsonDependency } from './utility/util';
 import {
   addPackageJsonDependency,
   NodeDependencyType,
 } from './utility/dependencies';
 
-export function addJest(options: JestOptions): Rule {
-  return chain([updateDependencies(options)]);
+export function addJest(): Rule {
+  return chain([updateDependencies()]);
 }
 
-function updateDependencies(options: JestOptions): Rule {
-  if (options) {
-  }
+function updateDependencies(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     const removeDependencies = [
       'karma',

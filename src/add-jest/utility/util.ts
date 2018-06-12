@@ -9,10 +9,15 @@ import { SchematicsException, Tree } from '@angular-devkit/schematics';
 import { readPackageJson, pkgJson, DeleteNodeDependency } from './dependencies';
 import { findPropertyInAstObject } from './json-utils';
 
+export enum Paths {
+  AngularJson = './angular.json',
+}
+
 export type WorkspaceSchema = experimental.workspace.WorkspaceSchema;
 
 export interface JestOptions {
   updateTests?: boolean;
+  project?: string;
 }
 
 export function getWorkspacePath(host: Tree): string {
@@ -54,7 +59,7 @@ export function getSourcePath(tree: Tree, options: any): String {
   return sourcePath;
 }
 
-// modified version from `utility/dependencies/getPackageJsonDependency`
+// modified version from utility/dependencies/getPackageJsonDependency
 export function removePackageJsonDependency(
   tree: Tree,
   dependency: DeleteNodeDependency

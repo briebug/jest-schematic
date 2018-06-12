@@ -6,14 +6,19 @@ import {
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
-import { removePackageJsonDependency } from './utility/util';
+import {
+  removePackageJsonDependency,
+  getWorkspace,
+  JestOptions,
+  getWorkspacePath,
+} from './utility/util';
 import {
   addPackageJsonDependency,
   NodeDependencyType,
 } from './utility/dependencies';
 
-export function addJest(): Rule {
-  return chain([updateDependencies()]);
+export function addJest(options: JestOptions): Rule {
+  return chain([updateDependencies(), cleanAngularJson(options)]);
 }
 
 function updateDependencies(): Rule {
@@ -33,12 +38,12 @@ function updateDependencies(): Rule {
 
     context.logger.debug('Remove Karma & Jasmine dependencies');
 
-    removeDependencies.forEach(packageName => {
+    removeDependencies.forEach((packageName) => {
       context.logger.debug(`Removing ${packageName}...`);
 
       removePackageJsonDependency(tree, {
         type: NodeDependencyType.Dev,
-        name: packageName
+        name: packageName,
       });
     });
 
@@ -58,6 +63,29 @@ function updateDependencies(): Rule {
       addPackageJsonDependency(tree, jestDependency);
     });
 
+    return tree;
+  };
+}
+
+function cleanAngularJson(options: JestOptions): Rule {
+  return (tree: Tree, context: SchematicContext) => {
+    context.logger.debug('Cleaning Angular.json file');
+
+    const workspace = getWorkspace(tree);
+    const workspacePath = getWorkspacePath(tree);
+    const project = options.project
+      ? workspace.projects[options.project]
+      : workspace.projects[workspace.defaultProject || ''];
+
+    if (project && project.architect) {
+      // remove test default ng test configuration
+      delete project.architect.test;
+
+      // const recorder = tree.beginUpdate(Paths.AngularJson);
+      console.log('angular json-> ', JSON.stringify(workspace, null, 2));
+
+      tree.overwrite(workspacePath, JSON.stringify(workspace, null, 2));
+    }
     return tree;
   };
 }

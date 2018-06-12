@@ -4,7 +4,6 @@ import {
   Tree,
   chain,
   url,
-  template,
   apply,
   move,
   mergeWith,
@@ -24,7 +23,6 @@ import {
   addPackageJsonDependency,
   NodeDependencyType,
 } from './utility/dependencies';
-import { strings } from '@angular-devkit/core';
 
 export function addJest(options: JestOptions): Rule {
   return chain([

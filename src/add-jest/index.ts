@@ -12,13 +12,18 @@ import {
   JestOptions,
   getWorkspacePath,
 } from './utility/util';
+
 import {
   addPackageJsonDependency,
   NodeDependencyType,
 } from './utility/dependencies';
 
 export function addJest(options: JestOptions): Rule {
-  return chain([updateDependencies(), cleanAngularJson(options)]);
+  return chain([
+    updateDependencies(),
+    cleanAngularJson(options),
+    removeFiles(),
+  ]);
 }
 
 function updateDependencies(): Rule {
@@ -31,7 +36,7 @@ function updateDependencies(): Rule {
       'karma-coverage-istanbul-reporter',
     ];
     const addJestDependencies = [
-      ['@types/jest', '6.0.3'],
+      ['@types/jest', '23.0.2'],
       ['jest', '23.1.0'],
       ['jest-preset-angular', '5.2.2'],
     ];
@@ -86,6 +91,12 @@ function cleanAngularJson(options: JestOptions): Rule {
 
       tree.overwrite(workspacePath, JSON.stringify(workspace, null, 2));
     }
+    return tree;
+  };
+}
+
+function removeFiles(): Rule {
+  return (tree: Tree) => {
     return tree;
   };
 }

@@ -5,9 +5,16 @@ import {
   join,
   Path,
 } from '@angular-devkit/core';
-import { SchematicsException, Tree } from '@angular-devkit/schematics';
+import {
+  SchematicsException,
+  Tree,
+  SchematicContext,
+} from '@angular-devkit/schematics';
 import { readPackageJson, pkgJson, DeleteNodeDependency } from './dependencies';
-import { findPropertyInAstObject } from './json-utils';
+import {
+  findPropertyInAstObject,
+  appendPropertyInAstObject,
+} from './json-utils';
 
 export enum Paths {
   AngularJson = './angular.json',
@@ -108,4 +115,38 @@ export function safeFileDelete(tree: Tree, path: string): boolean {
   } else {
     return false;
   }
+}
+
+export function addPropertyToPackageJson(
+  tree: Tree,
+  context: SchematicContext,
+  propertyName: string,
+  propertyValue: {}
+) {
+  const packageJsonAst = readPackageJson(tree);
+  const jestNode = findPropertyInAstObject(packageJsonAst, propertyName);
+  const recorder = tree.beginUpdate(pkgJson.Path);
+
+  if (!jestNode) {
+    // jest node missing, add key/value
+    appendPropertyInAstObject(
+      recorder,
+      packageJsonAst,
+      propertyName,
+      propertyValue,
+      4
+    );
+  } else if (jestNode.kind === 'object') {
+    // jest property exists, update values
+    // TODO: --write flag to overwrite properties
+    context.logger.warn(
+      `Attempted to update package.json but the jest key already exists. Jest object should contain the following...\n${JSON.stringify(
+        propertyValue,
+        null,
+        4
+      )}`
+    );
+  }
+
+  tree.commitUpdate(recorder);
 }

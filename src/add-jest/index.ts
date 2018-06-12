@@ -3,7 +3,6 @@ import {
   SchematicContext,
   Tree,
   chain,
-  url,
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
@@ -13,6 +12,7 @@ import {
   JestOptions,
   getWorkspacePath,
   safeFileDelete,
+  addPropertyToPackageJson,
 } from './utility/util';
 
 import {
@@ -26,6 +26,7 @@ export function addJest(options: JestOptions): Rule {
     cleanAngularJson(options),
     removeFiles(),
     addJestFile(),
+    addJestToPackageJson(),
   ]);
 }
 
@@ -123,6 +124,16 @@ function addJestFile(): Rule {
       './src/setupJest.ts',
       "import 'jest-preset-angular';\nimport './jestGlobalMocks'; // browser mocks globally available for every test\n"
     );
+    return tree;
+  };
+}
+
+function addJestToPackageJson(): Rule {
+  return (tree: Tree, context: SchematicContext) => {
+    addPropertyToPackageJson(tree, context, 'jest', {
+      preset: 'jest-preset-angular',
+      setupTestFrameworkScriptFile: '<rootDir>/src/setupJest.ts',
+    });
     return tree;
   };
 }

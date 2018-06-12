@@ -14,6 +14,7 @@ import { readPackageJson, pkgJson, DeleteNodeDependency } from './dependencies';
 import {
   findPropertyInAstObject,
   appendPropertyInAstObject,
+  insertPropertyInAstObjectInOrder,
 } from './json-utils';
 
 export enum Paths {
@@ -121,14 +122,14 @@ export function addPropertyToPackageJson(
   tree: Tree,
   context: SchematicContext,
   propertyName: string,
-  propertyValue: {}
+  propertyValue: { [key: string]: string }
 ) {
   const packageJsonAst = readPackageJson(tree);
-  const jestNode = findPropertyInAstObject(packageJsonAst, propertyName);
+  const pkgNode = findPropertyInAstObject(packageJsonAst, propertyName);
   const recorder = tree.beginUpdate(pkgJson.Path);
 
-  if (!jestNode) {
-    // jest node missing, add key/value
+  if (!pkgNode) {
+    // outer node missing, add key/value
     appendPropertyInAstObject(
       recorder,
       packageJsonAst,
@@ -136,16 +137,26 @@ export function addPropertyToPackageJson(
       propertyValue,
       4
     );
-  } else if (jestNode.kind === 'object') {
-    // jest property exists, update values
-    // TODO: --write flag to overwrite properties
-    context.logger.warn(
-      `Attempted to update package.json but the jest key already exists. Jest object should contain the following...\n${JSON.stringify(
-        propertyValue,
-        null,
-        4
-      )}`
-    );
+  } else if (pkgNode.kind === 'object') {
+    // property exists, update values
+    for (let [key, value] of Object.entries(propertyValue)) {
+      const innerNode = findPropertyInAstObject(pkgNode, key);
+
+      if (!innerNode) {
+        // script not found, add it
+        context.logger.debug(`creating ${key} with ${value}`);
+
+        insertPropertyInAstObjectInOrder(recorder, pkgNode, key, value, 4);
+      } else {
+        // script found, overwrite value
+        context.logger.debug(`overwriting ${key} with ${value}`);
+
+        const { end, start } = innerNode;
+
+        recorder.remove(start.offset, end.offset - start.offset);
+        recorder.insertRight(start.offset, JSON.stringify(value));
+      }
+    }
   }
 
   tree.commitUpdate(recorder);

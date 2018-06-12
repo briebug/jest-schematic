@@ -27,6 +27,7 @@ export function addJest(options: JestOptions): Rule {
     removeFiles(),
     addJestFile(),
     addJestToPackageJson(),
+    addTestScripts(),
   ]);
 }
 
@@ -133,6 +134,16 @@ function addJestToPackageJson(): Rule {
     addPropertyToPackageJson(tree, context, 'jest', {
       preset: 'jest-preset-angular',
       setupTestFrameworkScriptFile: '<rootDir>/src/setupJest.ts',
+    });
+    return tree;
+  };
+}
+
+function addTestScripts(): Rule {
+  return (tree: Tree, context: SchematicContext) => {
+    addPropertyToPackageJson(tree, context, 'scripts', {
+      'test': 'jest',
+      'test:watch': 'jest --watch'
     });
     return tree;
   };

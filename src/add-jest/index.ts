@@ -25,6 +25,7 @@ export function addJest(options: JestOptions): Rule {
     updateDependencies(),
     cleanAngularJson(options),
     removeFiles(),
+    addJestFile(),
   ]);
 }
 
@@ -110,6 +111,18 @@ function removeFiles(): Rule {
       }
     });
 
+    return tree;
+  };
+}
+
+function addJestFile(): Rule {
+  return (tree: Tree, context: SchematicContext) => {
+    context.logger.debug('adding setupJest.ts file to ./src dir');
+
+    tree.create(
+      './src/setupJest.ts',
+      "import 'jest-preset-angular';\nimport './jestGlobalMocks'; // browser mocks globally available for every test\n"
+    );
     return tree;
   };
 }

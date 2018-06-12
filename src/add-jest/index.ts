@@ -28,12 +28,12 @@ import { strings } from '@angular-devkit/core';
 
 export function addJest(options: JestOptions): Rule {
   return chain([
-    // updateDependencies(),
-    // cleanAngularJson(options),
-    // removeFiles(),
+    updateDependencies(),
+    cleanAngularJson(options),
+    removeFiles(),
     addJestFiles(),
-    // addJestToPackageJson(),
-    // addTestScripts(),
+    addJestToPackageJson(),
+    addTestScripts(),
   ]);
 }
 
@@ -126,11 +126,10 @@ function removeFiles(): Rule {
 function addJestFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.debug('adding setupJest.ts file to ./src dir');
-
     // TODO: handle project selection
     return chain([
-      mergeWith(apply(url('./files/test-config'), [move('./src')])),
-      mergeWith(apply(url('./files/jest-config'), [move('./')])),
+      mergeWith(apply(url('./files/src'), [move('./src')])),
+      mergeWith(apply(url('./files/root'), [move('./')])),
     ])(tree, context);
   };
 }

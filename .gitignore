@@ -1,5 +1,6 @@
 # Outputs
 src/**/*.js
+!src/**/files/**/*.js
 src/**/*.js.map
 src/**/*.d.ts
 

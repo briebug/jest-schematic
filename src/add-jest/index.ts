@@ -3,6 +3,11 @@ import {
   SchematicContext,
   Tree,
   chain,
+  url,
+  template,
+  apply,
+  move,
+  mergeWith,
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
@@ -19,15 +24,16 @@ import {
   addPackageJsonDependency,
   NodeDependencyType,
 } from './utility/dependencies';
+import { strings } from '@angular-devkit/core';
 
 export function addJest(options: JestOptions): Rule {
   return chain([
-    updateDependencies(),
-    cleanAngularJson(options),
-    removeFiles(),
-    addJestFile(),
-    addJestToPackageJson(),
-    addTestScripts(),
+    // updateDependencies(),
+    // cleanAngularJson(options),
+    // removeFiles(),
+    addJestFiles(),
+    // addJestToPackageJson(),
+    // addTestScripts(),
   ]);
 }
 
@@ -117,15 +123,15 @@ function removeFiles(): Rule {
   };
 }
 
-function addJestFile(): Rule {
+function addJestFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.debug('adding setupJest.ts file to ./src dir');
 
-    tree.create(
-      './src/setupJest.ts',
-      "import 'jest-preset-angular';\nimport './jestGlobalMocks'; // browser mocks globally available for every test\n"
-    );
-    return tree;
+    // TODO: handle project selection
+    return chain([
+      mergeWith(apply(url('./files/test-config'), [move('./src')])),
+      mergeWith(apply(url('./files/jest-config'), [move('./')])),
+    ])(tree, context);
   };
 }
 
@@ -141,6 +147,7 @@ function addJestToPackageJson(): Rule {
 
 function addTestScripts(): Rule {
   return (tree: Tree, context: SchematicContext) => {
+    // prettier-ignore
     addPropertyToPackageJson(tree, context, 'scripts', {
       'test': 'jest',
       'test:watch': 'jest --watch'

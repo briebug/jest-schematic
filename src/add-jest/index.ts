@@ -28,8 +28,8 @@ export default function(options: JestOptions): Rule {
     updateDependencies(),
     cleanAngularJson(options),
     removeFiles(),
-    addJestFiles(options),
-    addJestToPackageJson(),
+    addJestFiles(),
+    addJestToPackageJson(options),
     addTestScriptsToPackageJson(),
   ]);
 }
@@ -119,7 +119,7 @@ function removeFiles(): Rule {
   };
 }
 
-function addJestFiles(options: JestOptions): Rule {
+function addJestFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.debug('adding setupJest.ts file to ./src dir');
     // TODO: handle project selection
@@ -130,12 +130,18 @@ function addJestFiles(options: JestOptions): Rule {
   };
 }
 
-function addJestToPackageJson(): Rule {
+function addJestToPackageJson(options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    addPropertyToPackageJson(tree, context, 'jest', {
-      preset: 'jest-preset-angular',
-      setupTestFrameworkScriptFile: '<rootDir>/src/setupJest.ts',
-    });
+    const configChoice = options.config || '';
+
+    if (configChoice.toLowerCase() === 'packagejson') {
+      addPropertyToPackageJson(
+        tree,
+        context,
+        'jest',
+        require('./files/jest.config.js')
+      );
+    }
     return tree;
   };
 }

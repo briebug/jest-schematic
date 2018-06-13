@@ -26,6 +26,7 @@ export type WorkspaceSchema = experimental.workspace.WorkspaceSchema;
 export interface JestOptions {
   updateTests?: boolean;
   project?: string;
+  config?: 'file' | 'packagejson' | string;
 }
 
 export function getWorkspacePath(host: Tree): string {

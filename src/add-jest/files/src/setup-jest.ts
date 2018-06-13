@@ -1,6 +1,6 @@
 import 'jest-preset-angular';
 
-// global mocks for jsdom
+/* global mocks for jsdom */
 const mock = () => {
   let storage = {};
   return {
@@ -16,3 +16,6 @@ Object.defineProperty(window, 'sessionStorage', { value: mock() });
 Object.defineProperty(window, 'getComputedStyle', {
   value: () => ['-webkit-appearance'],
 });
+
+/* output shorter and more meaningful Zone error stack traces */
+// Error.stackTraceLimit = 2;

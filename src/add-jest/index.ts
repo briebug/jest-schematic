@@ -12,11 +12,10 @@ import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
 import {
   removePackageJsonDependency,
-  getWorkspace,
   JestOptions,
-  getWorkspacePath,
   safeFileDelete,
   addPropertyToPackageJson,
+  getWorkspaceConfig,
 } from './utility/util';
 
 import {
@@ -29,7 +28,7 @@ export function addJest(options: JestOptions): Rule {
     updateDependencies(),
     cleanAngularJson(options),
     removeFiles(),
-    addJestFiles(),
+    addJestFiles(options),
     addJestToPackageJson(),
     addTestScriptsToPackageJson(),
   ]);
@@ -85,15 +84,14 @@ function cleanAngularJson(options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.debug('Cleaning Angular.json file');
 
-    const workspace = getWorkspace(tree);
-    const workspacePath = getWorkspacePath(tree);
-    const project = options.project
-      ? workspace.projects[options.project]
-      : workspace.projects[workspace.defaultProject || ''];
+    const { projectProps, workspacePath, workspace } = getWorkspaceConfig(
+      tree,
+      options
+    );
 
-    if (project && project.architect) {
+    if (projectProps && projectProps.architect) {
       // remove test default ng test configuration
-      delete project.architect.test;
+      delete projectProps.architect.test;
 
       tree.overwrite(workspacePath, JSON.stringify(workspace, null, 2));
     }
@@ -121,13 +119,14 @@ function removeFiles(): Rule {
   };
 }
 
-function addJestFiles(): Rule {
+function addJestFiles(options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.debug('adding setupJest.ts file to ./src dir');
     // TODO: handle project selection
-    return chain([
-      mergeWith(apply(url('./files'), [move('./')])),
-    ])(tree, context);
+    return chain([mergeWith(apply(url('./files'), [move(`./`)]))])(
+      tree,
+      context
+    );
   };
 }
 

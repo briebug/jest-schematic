@@ -161,3 +161,12 @@ export function addPropertyToPackageJson(
 
   tree.commitUpdate(recorder);
 }
+
+export function getWorkspaceConfig(tree: Tree, options: any) {
+  const workspace = getWorkspace(tree);
+  const workspacePath = getWorkspacePath(tree);
+  const projectName = options.project || workspace.defaultProject || '';
+  const projectProps = workspace.projects[projectName];
+
+  return { projectProps, workspacePath, workspace, projectName };
+}

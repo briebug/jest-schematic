@@ -31,7 +31,7 @@ export function addJest(options: JestOptions): Rule {
     removeFiles(),
     addJestFiles(),
     addJestToPackageJson(),
-    addTestScripts(),
+    addTestScriptsToPackageJson(),
   ]);
 }
 
@@ -126,8 +126,7 @@ function addJestFiles(): Rule {
     context.logger.debug('adding setupJest.ts file to ./src dir');
     // TODO: handle project selection
     return chain([
-      mergeWith(apply(url('./files/src'), [move('./src')])),
-      mergeWith(apply(url('./files/root'), [move('./')])),
+      mergeWith(apply(url('./files'), [move('./')])),
     ])(tree, context);
   };
 }
@@ -142,7 +141,7 @@ function addJestToPackageJson(): Rule {
   };
 }
 
-function addTestScripts(): Rule {
+function addTestScriptsToPackageJson(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     // prettier-ignore
     addPropertyToPackageJson(tree, context, 'scripts', {

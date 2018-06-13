@@ -23,7 +23,7 @@ import {
   NodeDependencyType,
 } from './utility/dependencies';
 
-export function addJest(options: JestOptions): Rule {
+export default function(options: JestOptions): Rule {
   return chain([
     updateDependencies(),
     cleanAngularJson(options),

@@ -3,7 +3,7 @@
   "schematics": {
     "add-jest": {
       "description": "Add jest to an Angular CLI app.",
-      "factory": "./add-jest/index#addJest"
+      "factory": "./add-jest/index"
     }
   }
 }

@@ -13,6 +13,7 @@ jsconfig.json
 node_modules/
 npm-debug.log*
 yarn-error.log*
+*.todo
 
 # Mac OSX Finder files.
 **/.DS_Store

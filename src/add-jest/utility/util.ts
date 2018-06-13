@@ -10,7 +10,12 @@ import {
   Tree,
   SchematicContext,
 } from '@angular-devkit/schematics';
-import { readPackageJson, pkgJson, DeleteNodeDependency } from './dependencies';
+import {
+  readPackageJson,
+  pkgJson,
+  DeleteNodeDependency,
+  getPackageJsonDependency,
+} from './dependencies';
 import {
   findPropertyInAstObject,
   appendPropertyInAstObject,
@@ -21,16 +26,36 @@ export enum Paths {
   AngularJson = './angular.json',
 }
 
+export enum Configs {
+  JsonIndentLevel = 4,
+}
+
 export type WorkspaceSchema = experimental.workspace.WorkspaceSchema;
 
 export interface JestOptions {
   updateTests?: boolean;
   project?: string;
   config?: 'file' | 'packagejson' | string;
+  overwrite?: boolean;
+  __version__: number;
+}
+
+export function getAngularVersion(tree: Tree): number {
+  const packageNode = getPackageJsonDependency(tree, '@angular/core');
+
+  const version =
+    packageNode &&
+    packageNode.version.split('').find((char) => !!parseInt(char, 10));
+
+  return version ? +version : 0;
 }
 
 export function getWorkspacePath(host: Tree): string {
-  const possibleFiles = ['/angular.json', '/.angular.json'];
+  const possibleFiles = [
+    '/angular.json',
+    '/.angular.json',
+    '/angular-cli.json',
+  ];
   const path = possibleFiles.filter((path) => host.exists(path))[0];
 
   return path;
@@ -81,17 +106,16 @@ export function removePackageJsonDependency(
     // Haven't found the dependencies key.
     new SchematicsException('Could not find the package.json dependency');
   } else if (depsNode.kind === 'object') {
-    const fullPackageString = depsNode.text
-      .split('\n')
-      .filter((pkg) => {
-        return pkg.includes(`"${dependency.name}"`);
-      })[0]
-      .trim();
+    const fullPackageString = depsNode.text.split('\n').filter((pkg) => {
+      return pkg.includes(`"${dependency.name}"`);
+    })[0];
 
-    const commaDangle = fullPackageString.slice(-1) === ',' ? 1 : 0;
-    const packageAst = depsNode.properties.find(
-      (node) => node.key.value === dependency.name
-    );
+    const commaDangle =
+      fullPackageString && fullPackageString.trim().slice(-1) === ',' ? 1 : 0;
+
+    const packageAst = depsNode.properties.find((node) => {
+      return node.key.value.toLowerCase() === dependency.name.toLowerCase();
+    });
 
     // TODO: does this work for the last dependency?
     const newLineIndentation = 5;
@@ -136,7 +160,7 @@ export function addPropertyToPackageJson(
       packageJsonAst,
       propertyName,
       propertyValue,
-      4
+      Configs.JsonIndentLevel
     );
   } else if (pkgNode.kind === 'object') {
     // property exists, update values
@@ -147,7 +171,13 @@ export function addPropertyToPackageJson(
         // script not found, add it
         context.logger.debug(`creating ${key} with ${value}`);
 
-        insertPropertyInAstObjectInOrder(recorder, pkgNode, key, value, 4);
+        insertPropertyInAstObjectInOrder(
+          recorder,
+          pkgNode,
+          key,
+          value,
+          Configs.JsonIndentLevel
+        );
       } else {
         // script found, overwrite value
         context.logger.debug(`overwriting ${key} with ${value}`);
@@ -163,11 +193,32 @@ export function addPropertyToPackageJson(
   tree.commitUpdate(recorder);
 }
 
-export function getWorkspaceConfig(tree: Tree, options: any) {
+export function getWorkspaceConfig(tree: Tree, options: JestOptions) {
   const workspace = getWorkspace(tree);
   const workspacePath = getWorkspacePath(tree);
-  const projectName = options.project || workspace.defaultProject || '';
-  const projectProps = workspace.projects[projectName];
+  let projectName;
+  let projectProps;
+
+  if (options.__version__ >= 6) {
+    projectName = options.project || workspace.defaultProject || '';
+    projectProps = workspace.projects[projectName];
+  } else if (options.__version__ < 6) {
+    projectName = (workspace as any).project.name || '';
+    projectProps = (workspace as any).apps[0];
+  }
 
   return { projectProps, workspacePath, workspace, projectName };
+}
+
+/**
+ * Angular5 (angular-cli.json) config is formatted into an array of applications vs Angular6's (angular.json) object mapping
+ * multi-app Angular5 apps are currently not supported.
+ *
+ * @param tree
+ * @param options
+ */
+export function isMultiAppV5(tree: Tree, options: JestOptions) {
+  const config = getWorkspaceConfig(tree, options);
+
+  return options.__version__ < 6 && (config.workspace as any).apps.length > 1;
 }

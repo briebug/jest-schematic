@@ -7,6 +7,8 @@ import {
   apply,
   move,
   mergeWith,
+  filter,
+  FileEntry,
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
@@ -16,22 +18,28 @@ import {
   safeFileDelete,
   addPropertyToPackageJson,
   getWorkspaceConfig,
+  getAngularVersion,
 } from './utility/util';
 
 import {
   addPackageJsonDependency,
   NodeDependencyType,
 } from './utility/dependencies';
+import { Path } from '@angular-devkit/core';
 
 export default function(options: JestOptions): Rule {
-  return chain([
-    updateDependencies(),
-    cleanAngularJson(options),
-    removeFiles(),
-    addJestFiles(),
-    addJestToPackageJson(options),
-    addTestScriptsToPackageJson(),
-  ]);
+  return (tree: Tree, context: SchematicContext) => {
+    options = { ...options, __version__: getAngularVersion(tree) };
+
+    return chain([
+      updateDependencies(),
+      cleanAngularJson(options),
+      removeFiles(),
+      addJestFiles(options),
+      addJestToPackageJson(options),
+      addTestScriptsToPackageJson(),
+    ])(tree, context);
+  };
 }
 
 function updateDependencies(): Rule {
@@ -60,7 +68,6 @@ function updateDependencies(): Rule {
       });
     });
 
-    context.addTask(new NodePackageInstallTask());
     context.logger.debug('Adding Jest dependencies...');
 
     addJestDependencies.forEach((dependency) => {
@@ -74,6 +81,8 @@ function updateDependencies(): Rule {
       context.logger.debug(`Adding ${name}...`);
 
       addPackageJsonDependency(tree, jestDependency);
+
+      context.addTask(new NodePackageInstallTask());
     });
 
     return tree;
@@ -84,16 +93,23 @@ function cleanAngularJson(options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.debug('Cleaning Angular.json file');
 
-    const { projectProps, workspacePath, workspace } = getWorkspaceConfig(
-      tree,
-      options
-    );
+    if (options.__version__ === 6) {
+      const { projectProps, workspacePath, workspace } = getWorkspaceConfig(
+        tree,
+        options
+      );
 
-    if (projectProps && projectProps.architect) {
-      // remove test default ng test configuration
-      delete projectProps.architect.test;
+      if (projectProps && projectProps.architect) {
+        // remove test default ng test configuration
+        delete projectProps.architect.test;
 
-      tree.overwrite(workspacePath, JSON.stringify(workspace, null, 2));
+        tree.overwrite(workspacePath, JSON.stringify(workspace, null, 2));
+      }
+    } else if (options.__version__ < 6) {
+      // TODO: clean up angular-cli.json file. different format that V6 angular.json
+      console.warn(
+        'Automated clean up of the angular-cli.json file is not currently support for apps < version 6'
+      );
     }
     return tree;
   };
@@ -101,7 +117,11 @@ function cleanAngularJson(options: JestOptions): Rule {
 
 function removeFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    const deleteFiles = ['./src/karma.conf.js', './src/test.ts'];
+    const deleteFiles = [
+      './src/karma.conf.js',
+      './karma.conf.js',
+      './src/test.ts',
+    ];
 
     deleteFiles.forEach((filePath) => {
       context.logger.debug(`removing ${filePath}`);
@@ -109,9 +129,6 @@ function removeFiles(): Rule {
       const didDelete = safeFileDelete(tree, filePath);
 
       if (!didDelete) {
-        context.logger.info(
-          `Warning: attempted to remove the CLI original ${filePath} file.This file is no longer necessary for testing if it has been renamed.`
-        );
       }
     });
 
@@ -119,14 +136,39 @@ function removeFiles(): Rule {
   };
 }
 
-function addJestFiles(): Rule {
+function addJestFiles(options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    context.logger.debug('adding setupJest.ts file to ./src dir');
+    context.logger.debug('adding jest files to host dir');
     // TODO: handle project selection
-    return chain([mergeWith(apply(url('./files'), [move(`./`)]))])(
-      tree,
-      context
-    );
+
+    const checkForFiles = filter((path: Path, entry: FileEntry) => {
+      // older versions of the CLI (Angular v5) throw exception when writing a file that already exists
+      // check for files that already exists in host app against ./files
+      if (tree.exists(path)) {
+        // file already exists in host
+        const source = url('./files')(context);
+        const file = (source as Tree).read(path);
+        if (source !== null && file !== null) {
+          // overwrite file with template from ./files
+          tree.overwrite(path, file.toString());
+          return false;
+        } else {
+          // error reading file template, delete host file so a new one can be added
+          tree.delete(path);
+        }
+      }
+      // file doesn't exists in host, add from ./files
+      return true;
+    });
+
+    const rules = [move(`./`)];
+
+    if (options.__version__ < 6) {
+      // filter() doesn't work with V6 apps, files that already exist will throw an error
+      // < V6 apps will be able to apply the correct file changes (creat, update)
+      rules.unshift(checkForFiles);
+    }
+    return chain([mergeWith(apply(url('./files'), rules))])(tree, context);
   };
 }
 

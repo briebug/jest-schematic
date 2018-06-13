@@ -48,6 +48,7 @@ export function addPackageJsonDependency(
   const packageJsonAst = readPackageJson(tree);
   const depsNode = findPropertyInAstObject(packageJsonAst, dependency.type);
   const recorder = tree.beginUpdate(pkgJson.Path);
+
   if (!depsNode) {
     // Haven't found the dependencies key, add it to the root of the package.json.
     appendPropertyInAstObject(

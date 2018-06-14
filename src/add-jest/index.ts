@@ -32,7 +32,7 @@ export default function(options: JestOptions): Rule {
       updateDependencies(),
       cleanAngularJson(options),
       removeFiles(),
-      addJestFiles(options),
+      addJestFiles(),
       addJestToPackageJson(options),
       addTestScriptsToPackageJson(),
     ])(tree, context);
@@ -128,14 +128,14 @@ function removeFiles(): Rule {
     deleteFiles.forEach((filePath) => {
       context.logger.debug(`removing ${filePath}`);
 
-      const didDelete = safeFileDelete(tree, filePath);
+      safeFileDelete(tree, filePath);
     });
 
     return tree;
   };
 }
 
-function addJestFiles(options: JestOptions): Rule {
+function addJestFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.debug('adding jest files to host dir');
 

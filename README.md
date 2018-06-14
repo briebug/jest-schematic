@@ -20,7 +20,22 @@ npm run clean:launch
 
 `clean:launch` will reset the test-app to is current version controlled state, removing un-tracked files, and run the schematic against the test-app. This will be your main development command.
 
-⚠ **Be careful not to check in changes to the test-app directory unless necessary.**
+⚠ **Be careful not to check in changes to the test-app directory unless necessary.** ⚠
+
+### Test schematics against a local project
+
+- run `npm run build` to compile the schematic
+- in another shell, cd into the repo and run `npm link ../PATH_TO_THIS_PROJECT`
+  - this will link the projects so that the schematic command runs from you're local filesystem
+- in the repo you want to run the schematic against, run `ng g add-jest:add-jest`
+
+### Dev tips
+
+while developing, comment out the following line to avoid npm installing dependencies
+
+```ts
+context.addTask(new NodePackageInstallTask());
+```
 
 ### Reset test-app to its version controlled state
 
@@ -53,6 +68,7 @@ This repository is a basic Schematic implementation that serves as a starting po
 To test locally, install `@angular-devkit/schematics` globally and use the `schematics` command line tool. That tool acts the same as the `generate` command of the Angular CLI, but also has a debug mode.
 
 Check the documentation with
+
 ```bash
 schematics --help
 ```

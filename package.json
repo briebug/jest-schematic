@@ -3,16 +3,15 @@
   "version": "1.0.0",
   "description": "Add jest to an Angular CLI project",
   "scripts": {
-    "build": "tsc -p tsconfig.json -w",
+    "build": "tsc -p tsconfig.json -watch",
     "build:once": "tsc -p tsconfig.json",
-    "build:launch": "npm run build:once && npm run launch",
     "clean:testApp": "git checkout HEAD -- test-app && git clean -f -d test-app",
     "clean:launch": "npm run clean:testApp && npm run launch",
+    "launch": "cd test-app && ng g add-jest:add-jest",
     "test": "npm run build:once && jasmine src/**/*_spec.js",
-    "test:app:unit": "cd test-app && npm run test",
+    "test:app": "cd test-app && npm run lint && npm run test && npm run e2e && npm run build",
     "link": "cd test-app && npm link ../",
-    "debug": "echo \"debug not working with @angular/schematics\n> node --inspect-brk $(which schematics) .:addJest\"",
-    "launch": "cd test-app && ng g add-jest:add-jest"
+    "debug": "echo \"debug not setup with @angular/schematics\n> node --inspect-brk $(which schematics) .:addJest\""
   },
   "keywords": [
     "schematics"

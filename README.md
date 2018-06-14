@@ -1,8 +1,14 @@
 # Jest Angular Schematic
 
+## Getting started
+
+```shell
+npm install && npm run link
+```
+
 ## Development
 
-### Test schematic changes against this repositories test-app
+### Test schematic changes against this repositories Angular CLI test-app
 
 Schematic changes will be applied to the test app in the `./test-app` directory
 

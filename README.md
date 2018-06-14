@@ -10,7 +10,7 @@ npm install && npm run link
 
 ### Test schematic changes against this repositories Angular CLI test-app
 
-Schematic changes will be applied to the test app in the `./test-app` directory
+When running locally, schematic changes will be applied to the test app in the `./test-app` directory. The test-app is a bare CLI app and serves no other purpose than for testing schematics changes.
 
 Compile the typescript in watch mode in one shell:
 
@@ -30,14 +30,14 @@ npm run clean:launch
 
 ### Test schematics against a local project
 
-- run `npm run build` to compile the schematic
-- in another shell, cd into the repo and run `npm link ../PATH_TO_THIS_PROJECT`
-  - this will link the projects so that the schematic command runs from you're local filesystem
-- in the repo you want to run the schematic against, run `ng g add-jest:add-jest`
+- run `npm run build` to compile the schematic in watch mode
+- open another shell, cd into the local repo you want to run the schematic against, and run `npm link ../PATH_TO_THIS_PROJECT`
+  - this will symlink the projects so that the Jest schematic command runs from you're local filesystem
+- in the local repo you want to run the schematic against, run `ng g add-jest:add-jest`
 
 ### Dev tips
 
-while developing, comment out the following line to avoid npm installing dependencies
+For faster developing, find and comment out the following line to avoid npm installing dependencies
 
 ```ts
 context.addTask(new NodePackageInstallTask());
@@ -67,9 +67,9 @@ npm run build:once
 
 ## Testing
 
-### Test changes to local `/test-app` project
+### Test local test-app for regressions
 
-Run a series of standard tests to ensure things continue to function as expected in the test-app
+Run a series of standard tests to ensure the `./test-app` continues to function normally
 
 ```shell
 npm run test:app
@@ -103,3 +103,8 @@ npm publish
 ```
 
 That's it!
+
+## Documentation
+
+- [Schematics README](https://github.com/angular/angular-cli/blob/master/packages/angular_devkit/schematics/README.md)
+- [Angular CLI schematic examples](https://github.com/angular/angular-cli/blob/master/packages/schematics/angular/app-shell/index.ts)

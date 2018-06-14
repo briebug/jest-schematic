@@ -65,6 +65,16 @@ Compile the typescript files once
 npm run build:once
 ```
 
+## Testing
+
+### Test changes to local `/test-app` project
+
+Run a series of standard tests to ensure things continue to function as expected in the test-app
+
+```shell
+npm run test:app
+```
+
 ## Getting Started With Schematics
 
 This repository is a basic Schematic implementation that serves as a starting point to create and publish Schematics to NPM.

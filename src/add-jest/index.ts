@@ -7,8 +7,6 @@ import {
   apply,
   move,
   mergeWith,
-  filter,
-  FileEntry,
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
@@ -25,7 +23,6 @@ import {
   addPackageJsonDependency,
   NodeDependencyType,
 } from './utility/dependencies';
-import { Path } from '@angular-devkit/core';
 
 export default function(options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
@@ -121,15 +118,17 @@ function removeFiles(): Rule {
       './src/karma.conf.js',
       './karma.conf.js',
       './src/test.ts',
+
+      // unable to overwrite these with the url() approach.
+      './jest.config.js',
+      './src/setup-jest.ts',
+      './src/test-config.helper.ts',
     ];
 
     deleteFiles.forEach((filePath) => {
       context.logger.debug(`removing ${filePath}`);
 
       const didDelete = safeFileDelete(tree, filePath);
-
-      if (!didDelete) {
-      }
     });
 
     return tree;
@@ -139,36 +138,11 @@ function removeFiles(): Rule {
 function addJestFiles(options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.debug('adding jest files to host dir');
-    // TODO: handle project selection
 
-    const checkForFiles = filter((path: Path, entry: FileEntry) => {
-      // older versions of the CLI (Angular v5) throw exception when writing a file that already exists
-      // check for files that already exists in host app against ./files
-      if (tree.exists(path)) {
-        // file already exists in host
-        const source = url('./files')(context);
-        const file = (source as Tree).read(path);
-        if (source !== null && file !== null) {
-          // overwrite file with template from ./files
-          tree.overwrite(path, file.toString());
-          return false;
-        } else {
-          // error reading file template, delete host file so a new one can be added
-          tree.delete(path);
-        }
-      }
-      // file doesn't exists in host, add from ./files
-      return true;
-    });
-
-    const rules = [move(`./`)];
-
-    if (options.__version__ < 6) {
-      // filter() doesn't work with V6 apps, files that already exist will throw an error
-      // < V6 apps will be able to apply the correct file changes (creat, update)
-      rules.unshift(checkForFiles);
-    }
-    return chain([mergeWith(apply(url('./files'), rules))])(tree, context);
+    return chain([mergeWith(apply(url('./files'), [move('./')]))])(
+      tree,
+      context
+    );
   };
 }
 

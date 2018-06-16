@@ -9,7 +9,8 @@
     "clean:launch": "npm run clean:testApp && npm run launch",
     "launch": "cd test-app && ng g add-jest:add-jest",
     "test": "npm run build:once && jasmine src/**/*_spec.js",
-    "test:app": "cd test-app && npm run lint && npm run test && npm run e2e && npm run build",
+    "test:app": "cd test-app && npm run lint && npm run test -- --no-cache && npm run e2e && npm run build",
+    "test:ci": "npm run clean:launch && npm run test:app && npm run clean:testApp",
     "link": "cd test-app && npm link ../",
     "debug": "echo \"debug not setup with @angular/schematics\n> node --inspect-brk $(which schematics) .:addJest\""
   },
@@ -26,6 +27,7 @@
     "@types/jasmine": "^2.6.0",
     "@types/node": "^8.0.31",
     "jasmine": "^2.8.0",
+    "rxjs": "^6.2.1",
     "typescript": "^2.9.1"
   }
 }

@@ -108,3 +108,13 @@ That's it!
 
 - [Schematics README](https://github.com/angular/angular-cli/blob/master/packages/angular_devkit/schematics/README.md)
 - [Angular CLI schematic examples](https://github.com/angular/angular-cli/blob/master/packages/schematics/angular/app-shell/index.ts)
+
+## Common solutions
+
+### node-package
+
+If you receive the following error and are on Angular CLI 1.X, trying moving to `"@angular/cli": "1.7"` or higher.
+
+```shell
+Error: Unregistered task "node-package" in schematic ...
+```

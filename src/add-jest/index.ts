@@ -17,12 +17,17 @@ import {
   addPropertyToPackageJson,
   getWorkspaceConfig,
   getAngularVersion,
+  getLatestNodeVersion,
+  NpmRegistryPackage,
 } from './utility/util';
 
 import {
   addPackageJsonDependency,
   NodeDependencyType,
 } from './utility/dependencies';
+
+import { Observable, of, concat } from 'rxjs';
+import { map, concatMap } from 'rxjs/operators';
 
 export default function(options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
@@ -40,49 +45,48 @@ export default function(options: JestOptions): Rule {
 }
 
 function updateDependencies(): Rule {
-  return (tree: Tree, context: SchematicContext) => {
-    const removeDependencies = [
+  return (tree: Tree, context: SchematicContext): Observable<Tree> => {
+    context.logger.debug('Updating dependencies...');
+    context.addTask(new NodePackageInstallTask());
+
+    const removeDependencies = of(
       'karma',
       'karma-jasmine',
       'karma-jasmine-html-reporter',
       'karma-chrome-launcher',
-      'karma-coverage-istanbul-reporter',
-    ];
-    const addJestDependencies = [
-      ['@types/jest', '23.0.2'],
-      ['jest', '23.1.0'],
-      ['jest-preset-angular', '5.2.2'],
-    ];
+      'karma-coverage-istanbul-reporter'
+    ).pipe(
+      map((packageName: string) => {
+        context.logger.debug(`Removing ${packageName} dependency`);
 
-    context.logger.debug('Remove Karma & Jasmine dependencies');
+        removePackageJsonDependency(tree, {
+          type: NodeDependencyType.Dev,
+          name: packageName,
+        });
 
-    removeDependencies.forEach((packageName) => {
-      context.logger.debug(`Removing ${packageName}...`);
+        return tree;
+      })
+    );
 
-      removePackageJsonDependency(tree, {
-        type: NodeDependencyType.Dev,
-        name: packageName,
-      });
-    });
+    const addDependencies = of('jest', 'jest-preset-angular').pipe(
+      concatMap((packageName: string) => getLatestNodeVersion(packageName)),
+      map((packageFromRegistry: NpmRegistryPackage) => {
+        const { name, version } = packageFromRegistry;
+        context.logger.debug(
+          `Adding ${name}:${version} to ${NodeDependencyType.Dev}`
+        );
 
-    context.logger.debug('Adding Jest dependencies...');
+        addPackageJsonDependency(tree, {
+          type: NodeDependencyType.Dev,
+          name,
+          version,
+        });
 
-    addJestDependencies.forEach((dependency) => {
-      const [name, version] = dependency;
-      const jestDependency = {
-        type: NodeDependencyType.Dev,
-        name,
-        version,
-      };
+        return tree;
+      })
+    );
 
-      context.logger.debug(`Adding ${name}...`);
-
-      addPackageJsonDependency(tree, jestDependency);
-
-      context.addTask(new NodePackageInstallTask());
-    });
-
-    return tree;
+    return concat(removeDependencies, addDependencies);
   };
 }
 
@@ -105,7 +109,7 @@ function cleanAngularJson(options: JestOptions): Rule {
     } else if (options.__version__ < 6) {
       // TODO: clean up angular-cli.json file. different format that V6 angular.json
       console.warn(
-        'Automated clean up of the angular-cli.json file is not currently support for apps < version 6'
+        'Automated clean up of the angular-cli.json is currently not supported'
       );
     }
     return tree;

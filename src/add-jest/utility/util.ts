@@ -5,22 +5,32 @@ import {
   join,
   Path,
 } from '@angular-devkit/core';
+
 import {
   SchematicsException,
   Tree,
   SchematicContext,
 } from '@angular-devkit/schematics';
+
 import {
   readPackageJson,
   pkgJson,
   DeleteNodeDependency,
   getPackageJsonDependency,
 } from './dependencies';
+
 import {
   findPropertyInAstObject,
   appendPropertyInAstObject,
   insertPropertyInAstObjectInOrder,
 } from './json-utils';
+
+import * as http from 'http';
+
+export interface NpmRegistryPackage {
+  name: string;
+  version: string;
+}
 
 export enum Paths {
   AngularJson = './angular.json',
@@ -221,4 +231,39 @@ export function isMultiAppV5(tree: Tree, options: JestOptions) {
   const config = getWorkspaceConfig(tree, options);
 
   return options.__version__ < 6 && (config.workspace as any).apps.length > 1;
+}
+
+/**
+ * Attempt to retrieve the latest package version from NPM
+ * Return an optional "latest" version in case of error
+ * @param packageName
+ */
+export function getLatestNodeVersion(
+  packageName: string
+): Promise<NpmRegistryPackage> {
+  const DEFAULT_VERSION = 'latest';
+
+  return new Promise((resolve) => {
+    return http
+      .get(`http://registry.npmjs.org/${packageName}/latest`, (res) => {
+        let rawData = '';
+        res.on('data', (chunk) => (rawData += chunk));
+        res.on('end', () => {
+          try {
+            const { name, version } = JSON.parse(rawData);
+            resolve(buildPackage(name, version));
+          } catch (e) {
+            resolve(buildPackage(name));
+          }
+        });
+      })
+      .on('error', () => resolve(buildPackage(name)));
+  });
+
+  function buildPackage(
+    name: string,
+    version: string = DEFAULT_VERSION
+  ): NpmRegistryPackage {
+    return { name, version };
+  }
 }

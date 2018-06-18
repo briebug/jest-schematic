@@ -1,12 +1,26 @@
 # Jest Angular Schematic
 
-## Getting started
+## Usage 🚀
+
+Add [Jest](https://facebook.github.io/jest/) to an Angular 6 project. Inside a Angular CLI app directory:
+
+```shell
+ng add @briebug/jest
+```
+
+This command will:
+
+- install Jest, it's dependencies, and scripts
+- add necessary files for Jest to work with Angular
+- remove unnecessary Karma files and configuration
+
+## Development 🛠
+
+### Getting started
 
 ```shell
 npm install && npm run link
 ```
-
-## Development
 
 ### Test schematic changes against this repositories Angular CLI sandbox
 

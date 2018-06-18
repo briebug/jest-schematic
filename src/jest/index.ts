@@ -19,12 +19,12 @@ import {
   getAngularVersion,
   getLatestNodeVersion,
   NpmRegistryPackage,
-} from './utility/util';
+} from '../utility/util';
 
 import {
   addPackageJsonDependency,
   NodeDependencyType,
-} from './utility/dependencies';
+} from '../utility/dependencies';
 
 import { Observable, of, concat } from 'rxjs';
 import { map, concatMap } from 'rxjs/operators';

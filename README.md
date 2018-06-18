@@ -14,6 +14,8 @@ This command will:
 - add necessary files for Jest to work with Angular
 - remove unnecessary Karma files and configuration
 
+![ng-add-jest](docs/ng-add-jest.gif)
+
 ## Development 🛠
 
 ### Getting started

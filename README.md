@@ -120,9 +120,9 @@ Once all features are merged into `master`:
 3. `npm run release`
 4. select the next appropriate version given the changes being added
 5. copy the `Commits:` displayed in your shell
-  ![release-commits](./docs/np-release.png)
-6. edit the new release tag, and paste in the change notes and supply a title if appropriate
-  ![edit-github-release](./docs/edit-github-release.png)
+6. ![release-commits](./docs/np-release.png)
+7. edit the new release tag, and paste in the change notes and supply a title if appropriate
+8. ![edit-github-release](./docs/edit-github-release.png)
 
 ## Documentation
 

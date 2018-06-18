@@ -2,6 +2,10 @@
   "name": "@briebug/jest",
   "version": "1.0.0",
   "description": "Add jest to an Angular CLI project",
+  "repository": "briebug/jest-schematic",
+  "bugs": "https://github.com/briebug/jest-schematic/issues",
+  "homepage": "https://github.com/briebug/jest-schematic",
+  "main": "src/jest/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json -watch",
     "build:once": "tsc -p tsconfig.json",
@@ -12,12 +16,13 @@
     "teat:sandbox": "cd sandbox && npm run lint && npm run test -- --no-cache && npm run e2e && npm run build",
     "test:ci": "npm run clean:launch && npm run teat:sandbox && npm run clean",
     "link": "cd sandbox && npm link ../",
-    "debug": "echo \"debug not setup with @angular/schematics\n> node --inspect-brk $(which schematics) .:addJest\""
+    "debug": "echo \"debug not setup with @angular/schematics\n> node --inspect-brk $(which schematics) .:addJest\"",
+    "release": "np"
   },
   "keywords": [
     "schematics"
   ],
-  "author": "",
+  "author": "Briebug",
   "license": "MIT",
   "schematics": "./src/collection.json",
   "dependencies": {
@@ -29,5 +34,11 @@
     "jasmine": "^2.8.0",
     "rxjs": "^6.2.1",
     "typescript": "^2.9.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "np": "^3.0.4"
   }
 }

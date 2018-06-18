@@ -95,14 +95,18 @@ schematics --help
 
 ### Publishing
 
-To publish, simply do:
+Publishing is handled by [np](https://github.com/sindresorhus/np#usage). Ensure you have push access to this repo and are a [@breibug](https://www.npmjs.com/settings/briebug/packages) NPM contributor. Several [options](https://github.com/sindresorhus/np#usage) are available for releases such as `npm run release --no-publish`.
 
-```bash
-npm run build
-npm publish
-```
+Once all features are merged into `master`:
 
-That's it!
+1. on your machine, checkout `master`
+2. pull latest
+3. `npm run release`
+4. select the next appropriate version given the changes being added
+5. copy the `Commits:` displayed in your shell
+  ![release-commits](./docs/np-release.png)
+6. edit the new release tag, and paste in the change notes and supply a title if appropriate
+  ![edit-github-release](./docs/edit-github-release.png)
 
 ## Documentation
 

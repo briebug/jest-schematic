@@ -1,5 +1,5 @@
 {
-  "name": "add-jest",
+  "name": "@briebug/jest",
   "version": "1.0.0",
   "description": "Add jest to an Angular CLI project",
   "scripts": {
@@ -7,7 +7,7 @@
     "build:once": "tsc -p tsconfig.json",
     "clean:testApp": "git checkout HEAD -- test-app && git clean -f -d test-app",
     "clean:launch": "npm run clean:testApp && npm run launch",
-    "launch": "cd test-app && ng g add-jest:add-jest",
+    "launch": "cd test-app && ng g @briebug/jest:jest",
     "test": "npm run build:once && jasmine src/**/*_spec.js",
     "test:app": "cd test-app && npm run lint && npm run test -- --no-cache && npm run e2e && npm run build",
     "test:ci": "npm run clean:launch && npm run test:app && npm run clean:testApp",

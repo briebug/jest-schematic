@@ -33,7 +33,7 @@ npm run clean:launch
 - run `npm run build` to compile the schematic in watch mode
 - open another shell, cd into the local repo you want to run the schematic against, and run `npm link ../PATH_TO_THIS_PROJECT`
   - this will symlink the projects so that the Jest schematic command runs from you're local filesystem
-- in the local repo you want to run the schematic against, run `ng g add-jest:add-jest`
+- in the local repo you want to run the schematic against, run `ng g @briebug/jest:jest`
 
 ### Dev tips
 

@@ -1,9 +1,15 @@
 {
   "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
-    "add-jest": {
-      "description": "Add jest to an Angular CLI app.",
-      "factory": "./add-jest/index"
+    "ng-add": {
+      "description": "Adds Jest to the application",
+      "factory": "./jest/index",
+      "schema": "./jest/schema.json"
+    },
+    "jest": {
+      "description": "Adds Jest to the application",
+      "factory": "./jest/index",
+      "schema": "./jest/schema.json"
     }
   }
 }

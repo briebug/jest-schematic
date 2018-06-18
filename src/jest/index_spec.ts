@@ -6,10 +6,10 @@ import * as path from 'path';
 const collectionPath = path.join(__dirname, '../collection.json');
 
 
-describe('add-jest', () => {
+describe('@briebug/jest', () => {
   it('works', () => {
     const runner = new SchematicTestRunner('schematics', collectionPath);
-    const tree = runner.runSchematic('add-jest', {}, Tree.empty());
+    const tree = runner.runSchematic('@briebug/jest', {}, Tree.empty());
 
     expect(tree.files).toEqual([]);
   });

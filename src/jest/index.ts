@@ -38,7 +38,6 @@ export default function(options: JestOptions): Rule {
       cleanAngularJson(options),
       removeFiles(),
       addJestFiles(),
-      addJestToPackageJson(options),
       addTestScriptsToPackageJson(),
     ])(tree, context);
   };
@@ -147,22 +146,6 @@ function addJestFiles(): Rule {
       tree,
       context
     );
-  };
-}
-
-function addJestToPackageJson(options: JestOptions): Rule {
-  return (tree: Tree, context: SchematicContext) => {
-    const configChoice = options.config || '';
-
-    if (configChoice.toLowerCase() === 'packagejson') {
-      addPropertyToPackageJson(
-        tree,
-        context,
-        'jest',
-        require('./files/jest.config.js')
-      );
-    }
-    return tree;
   };
 }
 

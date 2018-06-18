@@ -8,9 +8,9 @@ npm install && npm run link
 
 ## Development
 
-### Test schematic changes against this repositories Angular CLI test-app
+### Test schematic changes against this repositories Angular CLI sandbox
 
-When running locally, schematic changes will be applied to the test app in the `./test-app` directory. The test-app is a bare CLI app and serves no other purpose than for testing schematics changes.
+When running locally, schematic changes will be applied to the test app in the `./sandbox` directory. The sandbox is a bare CLI app and serves no other purpose than for testing schematics changes.
 
 Compile the typescript in watch mode in one shell:
 
@@ -24,9 +24,9 @@ Run the following in another shell every time a schematic change is made:
 npm run clean:launch
 ```
 
-`clean:launch` will reset the test-app to is current version controlled state, removing un-tracked files, and run the schematic against the test-app. This will be your main development command.
+`clean:launch` will reset the sandbox to is current version controlled state, removing un-tracked files, and run the schematic against the sandbox. This will be your main development command.
 
-⚠ **Be careful not to check in changes to the test-app directory unless necessary.** ⚠
+⚠ **Be careful not to check in changes to the sandbox directory unless necessary.** ⚠
 
 ### Test schematics against a local project
 
@@ -43,12 +43,12 @@ For faster developing, find and comment out the following line to avoid npm inst
 context.addTask(new NodePackageInstallTask());
 ```
 
-### Reset test-app to its version controlled state
+### Reset sandbox to its version controlled state
 
-This will reset the test-app folder to its `HEAD` commit and remove untracked files.
+This will reset the sandbox folder to its `HEAD` commit and remove un-tracked files.
 
 ```shell
-npm run clean:testApp
+npm run clean
 ```
 
 ### Compile the schematics
@@ -67,19 +67,19 @@ npm run build:once
 
 ## Testing
 
-### Test local test-app for regressions
+### Test local sandbox for regressions
 
-Run a series of standard tests to ensure the `./test-app` continues to function normally
+Run a series of standard tests to ensure the `./sandbox` continues to function normally
 
 ```shell
-npm run test:app
+npm run teat:sandbox
 ```
 
 ## Getting Started With Schematics
 
 This repository is a basic Schematic implementation that serves as a starting point to create and publish Schematics to NPM.
 
-### Testing
+### Schematic Testing
 
 To test locally, install `@angular-devkit/schematics` globally and use the `schematics` command line tool. That tool acts the same as the `generate` command of the Angular CLI, but also has a debug mode.
 

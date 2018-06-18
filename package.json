@@ -12,9 +12,9 @@
     "clean": "git checkout HEAD -- sandbox && git clean -f -d sandbox",
     "clean:launch": "npm run clean && npm run launch",
     "launch": "cd sandbox && ng g @briebug/jest:jest",
-    "test": "npm run build:once && jasmine src/**/*_spec.js",
-    "teat:sandbox": "cd sandbox && npm run lint && npm run test -- --no-cache && npm run e2e && npm run build",
-    "test:ci": "npm run clean:launch && npm run teat:sandbox && npm run clean",
+    "test": "npm run clean:launch && npm run test:sandbox && npm run clean",
+    "test:unit": "npm run build:once && jasmine src/**/*_spec.js",
+    "test:sandbox": "cd sandbox && npm run lint && npm run test -- --no-cache && npm run e2e && npm run build",
     "link": "cd sandbox && npm link ../",
     "debug": "echo \"debug not setup with @angular/schematics\n> node --inspect-brk $(which schematics) .:addJest\"",
     "release": "np"

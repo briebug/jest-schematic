@@ -72,7 +72,7 @@ npm run build:once
 Run a series of standard tests to ensure the `./sandbox` continues to function normally
 
 ```shell
-npm run teat:sandbox
+npm run test:sandbox
 ```
 
 ## Getting Started With Schematics

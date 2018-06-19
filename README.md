@@ -1,5 +1,7 @@
 # Jest Angular Schematic
 
+[![npm (scoped)](https://img.shields.io/npm/v/@briebug/jest.svg)](https://www.npmjs.com/package/@briebug/jest)
+
 Add [Jest](https://facebook.github.io/jest/) to an Angular 6 project
 
 ## Usage 🚀

@@ -18,7 +18,7 @@ import {
   getWorkspaceConfig,
   getAngularVersion,
   getLatestNodeVersion,
-  NpmRegistryPackage,
+  NodePackage,
 } from '../utility/util';
 
 import {
@@ -69,7 +69,7 @@ function updateDependencies(): Rule {
 
     const addDependencies = of('jest', 'jest-preset-angular').pipe(
       concatMap((packageName: string) => getLatestNodeVersion(packageName)),
-      map((packageFromRegistry: NpmRegistryPackage) => {
+      map((packageFromRegistry: NodePackage) => {
         const { name, version } = packageFromRegistry;
         context.logger.debug(
           `Adding ${name}:${version} to ${NodeDependencyType.Dev}`
@@ -103,7 +103,7 @@ function cleanAngularJson(options: JestOptions): Rule {
         // remove test default ng test configuration
         delete projectProps.architect.test;
 
-        tree.overwrite(workspacePath, JSON.stringify(workspace, null, 2));
+        tree.overwrite(workspacePath, JSON.stringify(workspace, null, 2) + '\n');
       }
     } else if (options.__version__ < 6) {
       // TODO: clean up angular-cli.json file. different format that V6 angular.json

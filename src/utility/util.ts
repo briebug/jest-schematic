@@ -25,9 +25,9 @@ import {
   insertPropertyInAstObjectInOrder,
 } from './json-utils';
 
-import * as http from 'http';
+import { get } from 'http';
 
-export interface NpmRegistryPackage {
+export interface NodePackage {
   name: string;
   version: string;
 }
@@ -238,32 +238,27 @@ export function isMultiAppV5(tree: Tree, options: JestOptions) {
  * Return an optional "latest" version in case of error
  * @param packageName
  */
-export function getLatestNodeVersion(
-  packageName: string
-): Promise<NpmRegistryPackage> {
+export function getLatestNodeVersion(packageName: string): Promise<NodePackage> {
   const DEFAULT_VERSION = 'latest';
 
   return new Promise((resolve) => {
-    return http
-      .get(`http://registry.npmjs.org/${packageName}/latest`, (res) => {
-        let rawData = '';
-        res.on('data', (chunk) => (rawData += chunk));
-        res.on('end', () => {
-          try {
-            const { name, version } = JSON.parse(rawData);
-            resolve(buildPackage(name, version));
-          } catch (e) {
-            resolve(buildPackage(name));
-          }
-        });
-      })
-      .on('error', () => resolve(buildPackage(name)));
+    return get(`http://registry.npmjs.org/${packageName}`, (res) => {
+      let rawData = '';
+      res.on('data', (chunk) => (rawData += chunk));
+      res.on('end', () => {
+        try {
+          const response = JSON.parse(rawData);
+          const version = response && response['dist-tags'] || {};
+
+          resolve(buildPackage(packageName, version.latest));
+        } catch (e) {
+          resolve(buildPackage(packageName));
+        }
+      });
+    }).on('error', () => resolve(buildPackage(packageName)));
   });
 
-  function buildPackage(
-    name: string,
-    version: string = DEFAULT_VERSION
-  ): NpmRegistryPackage {
+  function buildPackage(name: string, version: string = DEFAULT_VERSION): NodePackage {
     return { name, version };
   }
 }

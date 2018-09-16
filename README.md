@@ -127,13 +127,13 @@ schematics --help
 
 ### Publishing
 
-Publishing is handled by [np](https://github.com/sindresorhus/np#usage). Ensure you have push access to this repo and are a [@briebug](https://www.npmjs.com/settings/briebug/packages) NPM contributor. Several [options](https://github.com/sindresorhus/np#usage) are available for releases such as `yarn release --no-publish`.
+Publishing is handled by [np](https://github.com/sindresorhus/np#usage). Ensure you have push access to this repo and are a [@briebug](https://www.npmjs.com/settings/briebug/packages) NPM contributor. Several [options](https://github.com/sindresorhus/np#usage) are available for releases such as `npm run release --no-publish`.
 
 Once all features are merged into `master`:
 
 1. on your machine, checkout `master`
 2. pull latest
-3. `yarn release`
+3. `npm run release`
 4. select the next appropriate version given the changes being added
 5. copy the `Commits:` displayed in your shell
 6. ![release-commits](./docs/np-release.png)

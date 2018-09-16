@@ -10,6 +10,11 @@
       "description": "Adds Jest to the application",
       "factory": "./jest/index",
       "schema": "./jest/schema.json"
+    },
+    "add": {
+      "description": "Adds Jest to the application",
+      "factory": "./jest/index",
+      "schema": "./jest/schema.json"
     }
   }
 }

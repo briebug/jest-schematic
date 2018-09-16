@@ -1,6 +1,6 @@
 # Jest Angular Schematic
 
-[![npm (scoped)](https://img.shields.io/npm/v/@briebug/jest.svg)](https://www.npmjs.com/package/@briebug/jest)
+[![npm (scoped)](https://img.shields.io/npm/v/@briebug/jest-schematic.svg)](https://www.npmjs.com/package/@briebug/jest-schematic)
 
 Add [Jest](https://facebook.github.io/jest/) to an Angular 6 project
 
@@ -9,13 +9,13 @@ Add [Jest](https://facebook.github.io/jest/) to an Angular 6 project
 Install globally
 
 ```shell
-npm install -g @briebug/jest
+npm install -g @briebug/jest-schematic
 ```
 
 Then in an Angular CLI project run
 
 ```shel
-ng g @briebug/jest:jest
+ng g @briebug/jest-schematic:jest
 ```
 
 This schematic will:
@@ -29,7 +29,7 @@ This schematic will:
 Optionally run as one command in an Angular CLI app directory. Note this will add the schematic as a dependency to your project.
 
 ```shell
-ng add @briebug/jest
+ng add @briebug/jest-schematic
 ```
 
 ## Development 🛠
@@ -65,7 +65,7 @@ npm run clean:launch
 - run `npm run build` to compile the schematic in watch mode
 - open another shell, cd into the local repo you want to run the schematic against, and run `npm link ../PATH_TO_THIS_PROJECT`
   - this will symlink the projects so that the Jest schematic command runs from you're local filesystem
-- in the local repo you want to run the schematic against, run `ng g @briebug/jest:jest`
+- in the local repo you want to run the schematic against, run `ng g @briebug/jest-schematic:jest`
 
 ### Dev tips
 
@@ -127,7 +127,7 @@ schematics --help
 
 ### Publishing
 
-Publishing is handled by [np](https://github.com/sindresorhus/np#usage). Ensure you have push access to this repo and are a [@breibug](https://www.npmjs.com/settings/briebug/packages) NPM contributor. Several [options](https://github.com/sindresorhus/np#usage) are available for releases such as `npm run release --no-publish`.
+Publishing is handled by [np](https://github.com/sindresorhus/np#usage). Ensure you have push access to this repo and are a [@briebug](https://www.npmjs.com/settings/briebug/packages) NPM contributor. Several [options](https://github.com/sindresorhus/np#usage) are available for releases such as `npm run release --no-publish`.
 
 Once all features are merged into `master`:
 

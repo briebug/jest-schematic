@@ -14,8 +14,8 @@ npm install -g @briebug/jest-schematic
 
 Then in an Angular CLI project run
 
-```shel
-ng g @briebug/jest-schematic:jest
+```shell
+ng g @briebug/jest-schematic:add
 ```
 
 This schematic will:
@@ -24,7 +24,7 @@ This schematic will:
 - add necessary files for Jest to work with Angular
 - remove unnecessary Karma files and configuration
 
-![ng-add-jest](docs/ng-add-jest.gif)
+![jest-schematic-demo-500](docs/jest-schematic-demo-500.gif)
 
 Optionally run as one command in an Angular CLI app directory. Note this will add the schematic as a dependency to your project.
 

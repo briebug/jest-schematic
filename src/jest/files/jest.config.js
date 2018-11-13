@@ -1,3 +1,4 @@
+// https://github.com/thymikee/jest-preset-angular#brief-explanation-of-config
 module.exports = {
   preset: 'jest-preset-angular',
   roots: ['src'],
@@ -10,4 +11,5 @@ module.exports = {
     '@src/(.*)': '<rootDir>/src/src/$1',
     '@state/(.*)': '<rootDir>/src/app/state/$1',
   },
+  transformIgnorePatterns: ['node_modules/(?!(jest-test))'],
 };

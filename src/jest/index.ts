@@ -19,12 +19,10 @@ import {
   getAngularVersion,
   getLatestNodeVersion,
   NodePackage,
+  parseJsonAtPath,
 } from '../utility/util';
 
-import {
-  addPackageJsonDependency,
-  NodeDependencyType,
-} from '../utility/dependencies';
+import { addPackageJsonDependency, NodeDependencyType } from '../utility/dependencies';
 
 import { Observable, of, concat } from 'rxjs';
 import { map, concatMap } from 'rxjs/operators';
@@ -35,10 +33,10 @@ export default function(options: JestOptions): Rule {
 
     return chain([
       updateDependencies(),
-      cleanAngularJson(options),
       removeFiles(),
       addJestFiles(),
       addTestScriptsToPackageJson(),
+      configureTsConfig(options),
     ])(tree, context);
   };
 }
@@ -71,9 +69,7 @@ function updateDependencies(): Rule {
       concatMap((packageName: string) => getLatestNodeVersion(packageName)),
       map((packageFromRegistry: NodePackage) => {
         const { name, version } = packageFromRegistry;
-        context.logger.debug(
-          `Adding ${name}:${version} to ${NodeDependencyType.Dev}`
-        );
+        context.logger.debug(`Adding ${name}:${version} to ${NodeDependencyType.Dev}`);
 
         addPackageJsonDependency(tree, {
           type: NodeDependencyType.Dev,
@@ -86,32 +82,6 @@ function updateDependencies(): Rule {
     );
 
     return concat(removeDependencies, addDependencies);
-  };
-}
-
-function cleanAngularJson(options: JestOptions): Rule {
-  return (tree: Tree, context: SchematicContext) => {
-    context.logger.debug('Cleaning Angular.json file');
-
-    if (options.__version__ === 6) {
-      const { projectProps, workspacePath, workspace } = getWorkspaceConfig(
-        tree,
-        options
-      );
-
-      if (projectProps && projectProps.architect) {
-        // remove test default ng test configuration
-        delete projectProps.architect.test;
-
-        tree.overwrite(workspacePath, JSON.stringify(workspace, null, 2) + '\n');
-      }
-    } else if (options.__version__ < 6) {
-      // TODO: clean up angular-cli.json file. different format that V6 angular.json
-      console.warn(
-        'Automated clean up of the angular-cli.json is currently not supported'
-      );
-    }
-    return tree;
   };
 }
 
@@ -142,10 +112,7 @@ function addJestFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.debug('adding jest files to host dir');
 
-    return chain([mergeWith(apply(url('./files'), [move('./')]))])(
-      tree,
-      context
-    );
+    return chain([mergeWith(apply(url('./files'), [move('./')]))])(tree, context);
   };
 }
 
@@ -157,5 +124,22 @@ function addTestScriptsToPackageJson(): Rule {
       'test:watch': 'jest --watch'
     });
     return tree;
+  };
+}
+
+function configureTsConfig(options: JestOptions): Rule {
+  return (tree: Tree) => {
+    const { projectProps } = getWorkspaceConfig(tree, options);
+    const tsConfigPath = projectProps.architect.test.options.tsConfig;
+    const workplaceTsConfig = parseJsonAtPath(tree, tsConfigPath);
+
+    if (workplaceTsConfig && workplaceTsConfig.value && workplaceTsConfig.value.compilerOptions) {
+      let val = workplaceTsConfig.value as any;
+      val.compilerOptions.module = 'commonjs';
+
+      return tree.overwrite(tsConfigPath, JSON.stringify(val, null, 2) + '\n');
+    } else {
+      return tree;
+    }
   };
 }

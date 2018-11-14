@@ -26,19 +26,19 @@
   "license": "MIT",
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "^0.6.8",
-    "@angular-devkit/schematics": "^0.6.8",
-    "@schematics/angular": "^0.6.8",
-    "rxjs": "^6.2.1"
+    "@angular-devkit/core": "^7.0.5",
+    "@angular-devkit/schematics": "^7.0.5",
+    "@schematics/angular": "^7.0.5",
+    "rxjs": "^6.3.3"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.6.0",
-    "@types/node": "^8.0.31",
-    "jasmine": "^2.8.0",
+    "@types/jasmine": "^2.8.11",
+    "@types/node": "^10.12.7",
+    "jasmine": "^3.3.0",
     "np": "^3.0.4",
-    "typescript": "^2.9.1"
+    "typescript": "^3.1.6"
   }
 }

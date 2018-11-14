@@ -4,6 +4,8 @@ import {
   parseJson,
   join,
   Path,
+  parseJsonAst,
+  JsonAstObject,
 } from '@angular-devkit/core';
 
 import {
@@ -13,7 +15,6 @@ import {
 } from '@angular-devkit/schematics';
 
 import {
-  readPackageJson,
   pkgJson,
   DeleteNodeDependency,
   getPackageJsonDependency,
@@ -108,7 +109,7 @@ export function removePackageJsonDependency(
   tree: Tree,
   dependency: DeleteNodeDependency
 ): void {
-  const packageJsonAst = readPackageJson(tree);
+  const packageJsonAst = parseJsonAtPath(tree, pkgJson.Path);
   const depsNode = findPropertyInAstObject(packageJsonAst, dependency.type);
   const recorder = tree.beginUpdate(pkgJson.Path);
 
@@ -159,7 +160,7 @@ export function addPropertyToPackageJson(
   propertyName: string,
   propertyValue: { [key: string]: string }
 ) {
-  const packageJsonAst = readPackageJson(tree);
+  const packageJsonAst = parseJsonAtPath(tree, pkgJson.Path);
   const pkgNode = findPropertyInAstObject(packageJsonAst, propertyName);
   const recorder = tree.beginUpdate(pkgJson.Path);
 
@@ -261,4 +262,23 @@ export function getLatestNodeVersion(packageName: string): Promise<NodePackage> 
   function buildPackage(name: string, version: string = DEFAULT_VERSION): NodePackage {
     return { name, version };
   }
+}
+
+export function parseJsonAtPath(tree: Tree, path: string): JsonAstObject {
+  const buffer = tree.read(path);
+
+  if (buffer === null) {
+    throw new SchematicsException('Could not read package.json.');
+  }
+
+  const content = buffer.toString();
+
+  const json = parseJsonAst(content, JsonParseMode.Strict);
+  if (json.kind != 'object') {
+    throw new SchematicsException(
+      'Invalid package.json. Was expecting an object'
+    );
+  }
+
+  return json;
 }

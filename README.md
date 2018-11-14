@@ -2,7 +2,13 @@
 
 [![npm (scoped)](https://img.shields.io/npm/v/@briebug/jest-schematic.svg)](https://www.npmjs.com/package/@briebug/jest-schematic)
 
-Add [Jest](https://facebook.github.io/jest/) to an Angular 6 project
+Add [Jest](https://facebook.github.io/jest/) to an Angular CLI project
+
+This schematic will:
+
+- install Jest, it's dependencies, and new scripts
+- add necessary files for Jest to work with Angular
+- remove unnecessary Karma files and configuration
 
 ## Usage 🚀
 
@@ -18,12 +24,6 @@ Then in an Angular CLI project run
 ng g @briebug/jest-schematic:add
 ```
 
-This schematic will:
-
-- install Jest, it's dependencies, and scripts
-- add necessary files for Jest to work with Angular
-- remove unnecessary Karma files and configuration
-
 ![jest-schematic-demo-500](docs/jest-schematic-demo-500.gif)
 
 Optionally run as one command in an Angular CLI app directory. Note this will add the schematic as a dependency to your project.
@@ -31,6 +31,20 @@ Optionally run as one command in an Angular CLI app directory. Note this will ad
 ```shell
 ng add @briebug/jest-schematic
 ```
+
+## Issues
+
+If you're experiencing issues when trying to run your tests with Jest, please view the troubleshooting section for [jest-preset-angular](https://github.com/thymikee/jest-preset-angular#troubleshooting) which this schematic utilizes.
+
+A common issues revolves around library dependencies. For example if your app depends on `NgRx` you'll need to tell Jest to compile the sources [explicitly](https://github.com/thymikee/jest-preset-angular#adjust-your-transformignorepatterns-whitelist) by appending it to the `transformIgnorePatterns` property in the `jest.config.js` file.
+
+```js
+module.exports = {
+  transformIgnorePatterns: ['node_modules/(?!(jest-test|@ngrx))'],
+};
+```
+
+Issues with this schematic can be filed [here](https://github.com/briebug/jest-schematic/issues/new/choose).
 
 ## Development 🛠
 
@@ -42,21 +56,15 @@ yarn && yarn link:sandbox
 
 ### Test schematic changes against this repositories Angular CLI sandbox
 
-When running locally, schematic changes will be applied to the test app in the `./sandbox` directory. The sandbox is a bare CLI app and serves no other purpose than for testing schematics changes.
+When running locally, schematic changes will be applied to the test app in the `./sandbox` directory. The sandbox is a bare CLI app allows for testing schematics changes.
 
-Compile the typescript in watch mode in one shell:
-
-```shell
-yarn build
-```
-
-Run the following in another shell every time a schematic change is made:
+Run the following when a schematic change is made:
 
 ```shell
-yarn clean:launch
+yarn build:clean:launch
 ```
 
-`clean:launch` will reset the sandbox to is current version controlled state, removing un-tracked files, and run the schematic against the sandbox. This will be your main development command.
+`build:clean:launch` will compile the Typescript, reset the sandbox to is current version controlled state removing un-tracked files, and run the schematic against the sandbox. This will be your main development command.
 
 ⚠ **Be careful not to check in changes to the sandbox directory unless necessary.** ⚠
 
@@ -65,7 +73,7 @@ yarn clean:launch
 - run `yarn build` to compile the schematic in watch mode
 - open another shell, cd into the local repo you want to run the schematic against, and run `yarn link @briebug/jest-schematic`. This assumes you've run `yarn link` in this repo on your machine.
   - this will symlink the projects so that the Jest schematic command runs from you're local filesystem
-- in the local repo you want to run the schematic against, run `ng g @briebug/jest-schematic:jest`
+- in the local repo you want to run the schematic against, run `ng g @briebug/jest-schematic:add`
 
 ### Dev tips
 
@@ -88,13 +96,13 @@ yarn clean
 Compile the typescript files in watch mode
 
 ```shell
-yarn build
+yarn build:watch
 ```
 
 Compile the typescript files once
 
 ```shell
-yarn build:once
+yarn build
 ```
 
 ## Testing
@@ -104,7 +112,7 @@ yarn build:once
 Run a series of standard tests to ensure the `./sandbox` continues to function normally
 
 ```shell
-yarn test:sandbox
+yarn test
 ```
 
 ## Getting Started With Schematics
@@ -123,7 +131,7 @@ schematics --help
 
 ### Unit Testing
 
-`yarn test` will run the unit tests, using Jasmine as a runner and test framework.
+`yarn test:unit` will run the unit tests, using Jasmine as a runner and test framework.
 
 ### Publishing
 
@@ -144,13 +152,3 @@ Once all features are merged into `master`:
 
 - [Schematics README](https://github.com/angular/angular-cli/blob/master/packages/angular_devkit/schematics/README.md)
 - [Angular CLI schematic examples](https://github.com/angular/angular-cli/blob/master/packages/schematics/angular/app-shell/index.ts)
-
-## Common solutions
-
-### node-package
-
-If you receive the following error and are on Angular CLI 1.X, trying moving to `"@angular/cli": "1.7"` or higher.
-
-```shell
-Error: Unregistered task "node-package" in schematic ...
-```

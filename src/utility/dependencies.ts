@@ -6,17 +6,14 @@
  * found in the LICENSE file at https://angular.io/license
  * https://github.com/angular/angular-cli/blob/master/packages/schematics/angular/utility/dependencies.ts
  */
-import {
-  JsonAstObject,
-  JsonParseMode,
-  parseJsonAst,
-} from '@angular-devkit/core';
-import { SchematicsException, Tree } from '@angular-devkit/schematics';
+
+import { Tree } from '@angular-devkit/schematics';
 import {
   appendPropertyInAstObject,
   findPropertyInAstObject,
   insertPropertyInAstObjectInOrder,
 } from './json-utils';
+import { parseJsonAtPath } from './util';
 
 export enum pkgJson {
   Path = '/package.json'
@@ -45,7 +42,7 @@ export function addPackageJsonDependency(
   tree: Tree,
   dependency: NodeDependency
 ): void {
-  const packageJsonAst = readPackageJson(tree);
+  const packageJsonAst = parseJsonAtPath(tree, pkgJson.Path);
   const depsNode = findPropertyInAstObject(packageJsonAst, dependency.type);
   const recorder = tree.beginUpdate(pkgJson.Path);
 
@@ -88,7 +85,7 @@ export function getPackageJsonDependency(
   tree: Tree,
   name: string
 ): NodeDependency | null {
-  const packageJson = readPackageJson(tree);
+  const packageJson = parseJsonAtPath(tree, pkgJson.Path);
   let dep: NodeDependency | null = null;
   [
     NodeDependencyType.Default,
@@ -114,21 +111,4 @@ export function getPackageJsonDependency(
   });
 
   return dep;
-}
-
-export function readPackageJson(tree: Tree): JsonAstObject {
-  const buffer = tree.read(pkgJson.Path);
-  if (buffer === null) {
-    throw new SchematicsException('Could not read package.json.');
-  }
-  const content = buffer.toString();
-
-  const packageJson = parseJsonAst(content, JsonParseMode.Strict);
-  if (packageJson.kind != 'object') {
-    throw new SchematicsException(
-      'Invalid package.json. Was expecting an object'
-    );
-  }
-
-  return packageJson;
 }

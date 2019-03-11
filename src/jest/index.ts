@@ -136,7 +136,9 @@ function configureTsConfig(options: JestOptions): Rule {
     if (workplaceTsConfig && workplaceTsConfig.value && workplaceTsConfig.value.compilerOptions) {
       let val = workplaceTsConfig.value as any;
       val.compilerOptions.module = 'commonjs';
-
+      if(val.files && val.files.includes('test.ts')) {
+        val.files.splice(val.files.findIndex(name === 'test.ts'), 1);
+      }
       return tree.overwrite(tsConfigPath, JSON.stringify(val, null, 2) + '\n');
     } else {
       return tree;

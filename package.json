@@ -11,7 +11,7 @@
     "build:watch": "tsc -p tsconfig.json -watch",
     "clean": "git checkout HEAD -- sandbox && git clean -f -d sandbox",
     "build:clean:launch": "yarn build && yarn clean && yarn launch",
-    "launch": "cd sandbox && ng g @briebug/jest-schematic:jest",
+    "launch": "cd sandbox && yarn && ./node_modules/.bin/ng g @briebug/jest-schematic:jest",
     "test": "yarn build:clean:launch && yarn test:sandbox && yarn clean",
     "test:unit": "yarn build:watch && jasmine src/**/*_spec.js",
     "test:sandbox": "cd sandbox && yarn lint && yarn test --no-cache && yarn e2e && yarn build",

@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - 11
+
+cache:
+  npm: true
+  yarn: true
+  directories:
+    - node_modules
+    - ~/.cache
+
+install:
+  - yarn
+
+script:
+  - yarn test

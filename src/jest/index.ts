@@ -26,6 +26,7 @@ import { addPackageJsonDependency, NodeDependencyType } from '../utility/depende
 
 import { Observable, of, concat } from 'rxjs';
 import { map, concatMap } from 'rxjs/operators';
+import { TsConfigSchema } from '../interfaces/ts-config-schema';
 
 export default function(options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
@@ -133,13 +134,17 @@ function configureTsConfig(options: JestOptions): Rule {
     const tsConfigPath = projectProps.architect.test.options.tsConfig;
     const workplaceTsConfig = parseJsonAtPath(tree, tsConfigPath);
 
-    if (workplaceTsConfig && workplaceTsConfig.value && workplaceTsConfig.value.compilerOptions) {
-      let val = workplaceTsConfig.value as any;
-      val.compilerOptions.module = 'commonjs';
+    let tsConfigContent: TsConfigSchema;
 
-      return tree.overwrite(tsConfigPath, JSON.stringify(val, null, 2) + '\n');
+    if (workplaceTsConfig && workplaceTsConfig.value) {
+      tsConfigContent = workplaceTsConfig.value;
     } else {
       return tree;
     }
+
+    tsConfigContent.compilerOptions = Object.assign(tsConfigContent.compilerOptions, { module: 'commonjs' });
+    tsConfigContent.files = tsConfigContent.files.filter((file: String) => file !== 'test.ts');
+
+    return tree.overwrite(tsConfigPath, JSON.stringify(tsConfigContent, null, 2) + '\n');
   };
 }

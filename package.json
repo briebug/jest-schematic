@@ -29,7 +29,7 @@
     "@angular-devkit/core": "^7.0.5",
     "@angular-devkit/schematics": "^7.0.5",
     "@schematics/angular": "^7.0.5",
-    "rxjs": "^6.3.3"
+    "rxjs": "~6.3.3"
   },
   "publishConfig": {
     "access": "public"

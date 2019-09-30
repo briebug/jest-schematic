@@ -142,8 +142,13 @@ function configureTsConfig(options: JestOptions): Rule {
       return tree;
     }
 
-    tsConfigContent.compilerOptions = Object.assign(tsConfigContent.compilerOptions, { module: 'commonjs' });
-    tsConfigContent.files = tsConfigContent.files.filter((file: String) => file !== 'test.ts');
+    tsConfigContent.compilerOptions = Object.assign(tsConfigContent.compilerOptions, {
+      module: 'commonjs',
+    });
+    tsConfigContent.files = tsConfigContent.files.filter((file: String) =>
+      // remove files that match the following
+      !['test.ts', 'src/test.ts'].some((testFile) => testFile === file)
+    );
 
     return tree.overwrite(tsConfigPath, JSON.stringify(tsConfigContent, null, 2) + '\n');
   };

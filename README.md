@@ -12,7 +12,11 @@ This schematic will:
 
 ## Usage 🚀
 
-Install globally
+```shell
+ng add @briebug/jest-schematic
+```
+
+#### Optionally: install globally
 
 ```shell
 npm install -g @briebug/jest-schematic
@@ -25,12 +29,6 @@ ng g @briebug/jest-schematic:add
 ```
 
 ![jest-schematic-demo-500](docs/jest-schematic-demo-500.gif)
-
-Optionally run as one command in an Angular CLI app directory. Note this will add the schematic as a dependency to your project.
-
-```shell
-ng add @briebug/jest-schematic
-```
 
 ## Issues
 

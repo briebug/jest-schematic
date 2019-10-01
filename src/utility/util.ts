@@ -158,7 +158,7 @@ export function addPropertyToPackageJson(
   tree: Tree,
   context: SchematicContext,
   propertyName: string,
-  propertyValue: { [key: string]: string }
+  propertyValue: { [key: string]: any }
 ) {
   const packageJsonAst = parseJsonAtPath(tree, pkgJson.Path);
   const pkgNode = findPropertyInAstObject(packageJsonAst, propertyName);

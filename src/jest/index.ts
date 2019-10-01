@@ -124,6 +124,30 @@ function addTestScriptsToPackageJson(): Rule {
       'test': 'jest',
       'test:watch': 'jest --watch'
     });
+
+    addPropertyToPackageJson(tree, context, 'jest', {
+      preset: 'jest-preset-angular',
+      roots: ['src'],
+      transform: {
+        '^.+\\.(ts|js|html)$': 'ts-jest',
+      },
+      setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
+      moduleNameMapper: {
+        '@app/(.*)': '<rootDir>/src/app/$1',
+        '@assets/(.*)': '<rootDir>/src/assets/$1',
+        '@core/(.*)': '<rootDir>/src/app/core/$1',
+        '@env': '<rootDir>/src/environments/environment',
+        '@src/(.*)': '<rootDir>/src/src/$1',
+        '@state/(.*)': '<rootDir>/src/app/state/$1',
+      },
+      globals: {
+        'ts-jest': {
+          tsConfig: '<rootDir>/tsconfig.spec.json',
+          stringifyContentPathRegex: '\\.html$',
+          astTransformers: ['jest-preset-angular/InlineHtmlStripStylesTransformer.js'],
+        },
+      },
+    });
     return tree;
   };
 }
@@ -144,10 +168,13 @@ function configureTsConfig(options: JestOptions): Rule {
 
     tsConfigContent.compilerOptions = Object.assign(tsConfigContent.compilerOptions, {
       module: 'commonjs',
+      emitDecoratorMetadata: true,
+      allowJs: true,
     });
-    tsConfigContent.files = tsConfigContent.files.filter((file: String) =>
-      // remove files that match the following
-      !['test.ts', 'src/test.ts'].some((testFile) => testFile === file)
+    tsConfigContent.files = tsConfigContent.files.filter(
+      (file: String) =>
+        // remove files that match the following
+        !['test.ts', 'src/test.ts'].some((testFile) => testFile === file)
     );
 
     return tree.overwrite(tsConfigPath, JSON.stringify(tsConfigContent, null, 2) + '\n');

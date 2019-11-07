@@ -1,6 +1,6 @@
 {
   "name": "@briebug/jest-schematic",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Add jest to an Angular CLI project",
   "repository": "briebug/jest-schematic",
   "bugs": "https://github.com/briebug/jest-schematic/issues",

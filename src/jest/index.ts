@@ -144,7 +144,10 @@ function addTestScriptsToPackageJson(): Rule {
         'ts-jest': {
           tsConfig: '<rootDir>/tsconfig.spec.json',
           stringifyContentPathRegex: '\\.html$',
-          astTransformers: ['jest-preset-angular/InlineHtmlStripStylesTransformer.js'],
+          astTransformers: [
+            'jest-preset-angular/build/InlineFilesTransformer',
+            'jest-preset-angular/build/StripStylesTransformer'
+          ],
         },
       },
     });

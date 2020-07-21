@@ -53,10 +53,12 @@ export interface JestOptions {
 
 export function getAngularVersion(tree: Tree): number {
   const packageNode = getPackageJsonDependency(tree, '@angular/core');
-  const version = packageNode?.version
-    .replace(/[~^]/, '')
-    .split('.')
-    .find(x => !!parseInt(x, 10));
+  const version =
+    packageNode &&
+    packageNode.version
+      .replace(/[~^]/, '')
+      .split('.')
+      .find(x => !!parseInt(x, 10));
 
   return version ? +version : 0;
 }

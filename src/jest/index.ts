@@ -126,12 +126,18 @@ function addTestScriptsToPackageJson(): Rule {
     });
 
     addPropertyToPackageJson(tree, context, 'jest', {
-      preset: 'jest-preset-angular',
-      roots: ['src'],
-      transform: {
-        '^.+\\.(ts|js|html)$': 'ts-jest',
+      globals: {
+        'ts-jest': {
+          tsConfig: '<rootDir>/tsconfig.spec.json',
+          stringifyContentPathRegex: '\\.html$',
+          astTransformers: {
+            before: [
+              'jest-preset-angular/build/InlineFilesTransformer',
+              'jest-preset-angular/build/StripStylesTransformer',
+            ],
+          },
+        },
       },
-      setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
       moduleNameMapper: {
         '@app/(.*)': '<rootDir>/src/app/$1',
         '@assets/(.*)': '<rootDir>/src/assets/$1',
@@ -140,15 +146,15 @@ function addTestScriptsToPackageJson(): Rule {
         '@src/(.*)': '<rootDir>/src/src/$1',
         '@state/(.*)': '<rootDir>/src/app/state/$1',
       },
-      globals: {
-        'ts-jest': {
-          tsConfig: '<rootDir>/tsconfig.spec.json',
-          stringifyContentPathRegex: '\\.html$',
-          astTransformers: [
-            'jest-preset-angular/build/InlineFilesTransformer',
-            'jest-preset-angular/build/StripStylesTransformer'
-          ],
-        },
+      preset: 'jest-preset-angular',
+      roots: ['src'],
+      setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
+      snapshotSerializers: [
+        'jest-preset-angular/build/AngularSnapshotSerializer.js',
+        'jest-preset-angular/build/HTMLCommentSerializer.js',
+      ],
+      transform: {
+        '^.+\\.(ts|js|html)$': 'ts-jest',
       },
     });
     return tree;

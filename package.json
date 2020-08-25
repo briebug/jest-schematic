@@ -40,6 +40,6 @@
     "@types/node": "^12.6.9",
     "jasmine": "^3.4.0",
     "np": "^5.0.3",
-    "typescript": "^3.5.3"
+    "typescript": "^3.9.5"
   }
 }

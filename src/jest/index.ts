@@ -179,6 +179,16 @@ function configureTsConfig(options: JestOptions): Rule {
       module: 'commonjs',
       emitDecoratorMetadata: true,
       allowJs: true,
+    }, {
+      // add the following type entries
+      types: ['jest']
+        .concat(tsConfigContent.compilerOptions?.types ?? [])
+        .filter(
+          (type: string) =>
+            // remove the following type entries
+            ['jasmine'].indexOf(type) === -1
+        )
+        .sort()
     });
     tsConfigContent.files = tsConfigContent.files.filter(
       (file: String) =>

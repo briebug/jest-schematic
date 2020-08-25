@@ -2,19 +2,17 @@
 
 [![npm (scoped)](https://img.shields.io/npm/v/@briebug/jest-schematic.svg)](https://www.npmjs.com/package/@briebug/jest-schematic)
 
-Add [Jest](https://facebook.github.io/jest/) to an Angular CLI project
-
-This schematic will:
-
-- install Jest, it's dependencies, and new scripts
-- add necessary files for Jest to work with Angular
-- remove unnecessary Karma files and configuration
-
 ## Usage 🚀
 
 ```shell
 ng add @briebug/jest-schematic
 ```
+
+This schematic will add [Jest](https://facebook.github.io/jest/) to an Angular project:
+
+- install Jest, it's dependencies, and new scripts
+- add necessary files for Jest to work with Angular
+- remove unnecessary Karma files and configuration
 
 #### Optionally: install globally
 
@@ -30,7 +28,7 @@ ng g @briebug/jest-schematic:add
 
 ![jest-schematic-demo-500](docs/jest-schematic-demo-500.gif)
 
-## Issues
+## Issues 🧐
 
 If you're experiencing issues when trying to run your tests with Jest, please view the troubleshooting section for [jest-preset-angular](https://github.com/thymikee/jest-preset-angular#troubleshooting) which this schematic utilizes.
 
@@ -43,6 +41,10 @@ module.exports = {
 ```
 
 Issues with this schematic can be filed [here](https://github.com/briebug/jest-schematic/issues/new/choose).
+
+## Learning Resources 📚
+
+- [Unit Testing Angular With Jest](https://medium.com/@ole.ersoy/unit-testing-angular-with-jest-b65888ff33f6)
 
 ## Development 🛠
 
@@ -112,24 +114,6 @@ Run a series of standard tests to ensure the `./sandbox` continues to function n
 ```shell
 yarn test
 ```
-
-## Getting Started With Schematics
-
-This repository is a basic Schematic implementation that serves as a starting point to create and publish Schematics to NPM.
-
-### Schematic Testing
-
-To test locally, install `@angular-devkit/schematics` globally and use the `schematics` command line tool. That tool acts the same as the `generate` command of the Angular CLI, but also has a debug mode.
-
-Check the documentation with
-
-```bash
-schematics --help
-```
-
-### Unit Testing
-
-`yarn test:unit` will run the unit tests, using Jasmine as a runner and test framework.
 
 ### Publishing
 

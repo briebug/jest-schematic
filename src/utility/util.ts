@@ -53,10 +53,12 @@ export interface JestOptions {
 
 export function getAngularVersion(tree: Tree): number {
   const packageNode = getPackageJsonDependency(tree, '@angular/core');
-
   const version =
     packageNode &&
-    packageNode.version.split('').find((char) => !!parseInt(char, 10));
+    packageNode.version
+      .replace(/[~^]/, '')
+      .split('.')
+      .find(x => !!parseInt(x, 10));
 
   return version ? +version : 0;
 }
@@ -273,7 +275,7 @@ export function parseJsonAtPath(tree: Tree, path: string): JsonAstObject {
 
   const content = buffer.toString();
 
-  const json = parseJsonAst(content, JsonParseMode.Strict);
+  const json = parseJsonAst(content, JsonParseMode.CommentsAllowed);
   if (json.kind != 'object') {
     throw new SchematicsException(
       'Invalid package.json. Was expecting an object'

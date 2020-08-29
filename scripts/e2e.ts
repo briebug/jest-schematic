@@ -2,8 +2,8 @@ import { exec } from './utils';
 import * as packageJson from '../package.json';
 
 enum SandboxType {
-  single = 'sandbox',
-  workspace = 'workspace',
+  single = 'sandboxes/single-app',
+  workspace = 'sandboxes/workspace',
 }
 
 const build = async () => {

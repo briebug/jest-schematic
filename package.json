@@ -7,16 +7,7 @@
   "homepage": "https://github.com/briebug/jest-schematic",
   "main": "src/jest/index.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "build:watch": "tsc -p tsconfig.json -watch",
-    "clean": "git checkout HEAD -- sandbox && git clean -f -d sandbox",
-    "build:clean:launch": "yarn build && yarn clean && yarn launch",
-    "launch": "yarn link:sandbox && cd sandbox && yarn && ./node_modules/.bin/ng g @briebug/jest-schematic:jest",
-    "test": "yarn build:clean:launch && yarn test:sandbox && yarn clean",
-    "test:unit": "yarn build:watch && jasmine src/**/*_spec.js",
-    "test:sandbox": "cd sandbox && yarn lint && yarn test --no-cache && yarn build",
-    "link:sandbox": "yarn link && cd sandbox && yarn link @briebug/jest-schematic",
-    "debug": "echo \"debug not setup with @angular/schematics\n> node --inspect-brk $(which schematics) .:addJest\"",
+    "test": "ts-node --project=./scripts/tsconfig.json ./scripts/e2e.ts",
     "release": "np"
   },
   "keywords": [
@@ -41,11 +32,14 @@
   "devDependencies": {
     "@types/jasmine": "^3.3.16",
     "@types/node": "^12.6.9",
+    "@types/shelljs": "^0.8.8",
     "husky": "^4.2.5",
     "jasmine": "^3.4.0",
     "lint-staged": "^10.2.13",
     "np": "^5.0.3",
     "prettier": "^2.1.1",
+    "shelljs": "^0.8.4",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
   },
   "husky": {

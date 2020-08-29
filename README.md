@@ -51,7 +51,7 @@ Issues with this schematic can be filed [here](https://github.com/briebug/jest-s
 ### Getting started
 
 ```shell
-yarn && yarn link:sandbox
+npm i && npm run link:sandbox
 ```
 
 ### Test schematic changes against this repositories Angular CLI sandbox
@@ -61,7 +61,7 @@ When running locally, schematic changes will be applied to the test app in the `
 Run the following when a schematic change is made:
 
 ```shell
-yarn build:clean:launch
+npm run build:clean:launch
 ```
 
 `build:clean:launch` will compile the Typescript, reset the sandbox to is current version controlled state removing un-tracked files, and run the schematic against the sandbox. This will be your main development command.
@@ -70,8 +70,8 @@ yarn build:clean:launch
 
 ### Test schematics against a local project
 
-- run `yarn build` to compile the schematic in watch mode
-- open another shell, cd into the local repo you want to run the schematic against, and run `yarn link @briebug/jest-schematic`. This assumes you've run `yarn link` in this repo on your machine.
+- run `npm run build` to compile the schematic in watch mode
+- open another shell, cd into the local repo you want to run the schematic against, and run `npm link @briebug/jest-schematic`. This assumes you've run `npm link` in this repo on your machine.
   - this will symlink the projects so that the Jest schematic command runs from you're local filesystem
 - in the local repo you want to run the schematic against, run `ng g @briebug/jest-schematic:add`
 
@@ -88,7 +88,7 @@ context.addTask(new NodePackageInstallTask());
 This will reset the sandbox folder to its `HEAD` commit and remove un-tracked files.
 
 ```shell
-yarn clean
+npm run clean
 ```
 
 ### Compile the schematics
@@ -96,13 +96,13 @@ yarn clean
 Compile the typescript files in watch mode
 
 ```shell
-yarn build:watch
+npm run build:watch
 ```
 
 Compile the typescript files once
 
 ```shell
-yarn build
+npm run build
 ```
 
 ## Testing
@@ -112,7 +112,7 @@ yarn build
 Run a series of standard tests to ensure the `./sandbox` continues to function normally
 
 ```shell
-yarn test
+npm test
 ```
 
 ### Publishing

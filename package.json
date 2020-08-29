@@ -1,7 +1,7 @@
 {
   "name": "@briebug/jest-schematic",
   "version": "2.2.0",
-  "description": "Add jest to an Angular CLI project",
+  "description": "Schematic to add jest to an Angular CLI project",
   "repository": "briebug/jest-schematic",
   "bugs": "https://github.com/briebug/jest-schematic/issues",
   "homepage": "https://github.com/briebug/jest-schematic",
@@ -20,7 +20,10 @@
     "release": "np"
   },
   "keywords": [
-    "schematics"
+    "schematics",
+    "jest-schematic",
+    "jest",
+    "angular"
   ],
   "author": "Briebug",
   "license": "MIT",

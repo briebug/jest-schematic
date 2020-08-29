@@ -51,7 +51,7 @@ Issues with this schematic can be filed [here](https://github.com/briebug/jest-s
 ### Getting started
 
 ```shell
-npm i && npm run link:sandbox
+yarn && yarn link:sandbox
 ```
 
 ### Test schematic changes against this repositories Angular CLI sandbox
@@ -61,7 +61,7 @@ When running locally, schematic changes will be applied to the test app in the `
 Run the following when a schematic change is made:
 
 ```shell
-npm run build:clean:launch
+yarn build:clean:launch
 ```
 
 `build:clean:launch` will compile the Typescript, reset the sandbox to is current version controlled state removing un-tracked files, and run the schematic against the sandbox. This will be your main development command.
@@ -70,8 +70,8 @@ npm run build:clean:launch
 
 ### Test schematics against a local project
 
-- run `npm run build` to compile the schematic in watch mode
-- open another shell, cd into the local repo you want to run the schematic against, and run `npm link @briebug/jest-schematic`. This assumes you've run `npm link` in this repo on your machine.
+- run `yarn build` to compile the schematic in watch mode
+- open another shell, cd into the local repo you want to run the schematic against, and run `yarn link @briebug/jest-schematic`. This assumes you've run `yarn link` in this repo on your machine.
   - this will symlink the projects so that the Jest schematic command runs from you're local filesystem
 - in the local repo you want to run the schematic against, run `ng g @briebug/jest-schematic:add`
 
@@ -88,7 +88,7 @@ context.addTask(new NodePackageInstallTask());
 This will reset the sandbox folder to its `HEAD` commit and remove un-tracked files.
 
 ```shell
-npm run clean
+yarn clean
 ```
 
 ### Compile the schematics
@@ -96,13 +96,13 @@ npm run clean
 Compile the typescript files in watch mode
 
 ```shell
-npm run build:watch
+yarn build:watch
 ```
 
 Compile the typescript files once
 
 ```shell
-npm run build
+yarn build
 ```
 
 ## Testing
@@ -112,18 +112,18 @@ npm run build
 Run a series of standard tests to ensure the `./sandbox` continues to function normally
 
 ```shell
-npm test
+yarn test
 ```
 
 ### Publishing
 
-Publishing is handled by [np](https://github.com/sindresorhus/np#usage). Ensure you have push access to this repo and are a [@briebug](https://www.npmjs.com/settings/briebug/packages) NPM contributor. Several [options](https://github.com/sindresorhus/np#usage) are available for releases such as `npm run release --no-publish`.
+Publishing is handled by [np](https://github.com/sindresorhus/np#usage). Ensure you have push access to this repo and are a [@briebug](https://www.npmjs.com/settings/briebug/packages) NPM contributor. Several [options](https://github.com/sindresorhus/np#usage) are available for releases such as `yarn release --no-publish`.
 
 Once all features are merged into `master`:
 
 1. on your machine, checkout `master`
 2. pull latest
-3. `npm run release`
+3. `yarn release`
 4. select the next appropriate version given the changes being added
 5. copy the `Commits:` displayed in your shell
 6. ![release-commits](./docs/np-release.png)

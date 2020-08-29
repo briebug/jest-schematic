@@ -11,7 +11,6 @@ jobs:
           - v1-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
-
       - run: npm ci
       - save_cache:
           paths:
@@ -19,4 +18,5 @@ jobs:
             - sandbox/node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       # run tests!
+      - run: chmod -R 777 /usr/local/lib/node_modules/@briebug
       - run: npm test

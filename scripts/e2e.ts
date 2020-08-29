@@ -5,6 +5,7 @@ enum SandboxType {
   single = 'sandboxes/single-app',
   workspace = 'sandboxes/workspace',
 }
+const sandboxList = Object.keys(SandboxType);
 
 const build = async () => {
   return await exec('tsc -p tsconfig.json');
@@ -26,19 +27,36 @@ const testSchematic = async (type: SandboxType) => {
   return await exec(`cd ${type} && yarn lint && yarn test --no-cache && yarn build`);
 };
 
-const launch = async (type: SandboxType) => {
+const launch = async () => {
+  let arg = process.argv[2] as SandboxType;
+
+  if (!arg || !sandboxList.find((t) => t.includes(arg))) {
+    return [
+      `Invalid Sandbox type "${arg}"`,
+      `Please provide a valid type: ${sandboxList.join(', ')}`,
+    ].join('\n');
+  }
+
+  const type = SandboxType[arg];
+
   await build();
   await clean(type);
   await link(type);
   await runSchematic(type);
   await testSchematic(type);
-  await clean(type);
-  return;
+  return await clean(type);
 };
 
-launch(SandboxType.single)
-  .then(() => process.exit(process.exitCode || 0))
-  .catch((e) => {
-    console.log(e);
+launch()
+  .then((msg) => {
+    if (msg) {
+      console.log(msg);
+    }
+    return process.exit(process.exitCode || 0);
+  })
+  .catch((msg) => {
+    if (msg) {
+      console.log(msg);
+    }
     return process.exit(process.exitCode || 1);
   });

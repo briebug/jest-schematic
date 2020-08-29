@@ -15,7 +15,8 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-            - sandbox/node_modules
+            - sandboxes/single-app/node_modules
+            - sandboxes/workspace/node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       # run tests!
-      - run: yarn test
+      - run: yarn test single

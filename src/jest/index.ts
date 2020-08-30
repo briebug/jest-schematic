@@ -37,6 +37,7 @@ export default function (options: JestOptions): Rule {
     return chain([
       updateDependencies(),
       removeFiles(),
+      updateAngularJson(),
       addJestFiles(),
       addTestScriptsToPackageJson(),
       configureTsConfig(options),
@@ -68,7 +69,12 @@ function updateDependencies(): Rule {
       })
     );
 
-    const addDependencies = of('jest', '@types/jest', 'jest-preset-angular').pipe(
+    const addDependencies = of(
+      'jest',
+      '@types/jest',
+      'jest-preset-angular',
+      '@angular-builders/jest'
+    ).pipe(
       concatMap((packageName: string) => getLatestNodeVersion(packageName)),
       map((packageFromRegistry: NodePackage) => {
         const { name, version } = packageFromRegistry;
@@ -115,6 +121,24 @@ function removeFiles(): Rule {
       });
     });
 
+    return tree;
+  };
+}
+
+function updateAngularJson(): Rule {
+  return (tree: Tree) => {
+    const angularJson = gwc(tree);
+
+    Object.entries(angularJson.projects as Record<string, any>).forEach(([_, v]) => {
+      const { test } = v?.architect;
+
+      test.builder = '@angular-builders/jest:run';
+      delete test.options.main;
+      delete test.options.karmaConfig;
+    });
+
+    // todo use project formatter or an ast update strategy to avoid formatting irrelevant fields
+    tree.overwrite('angular.json', JSON.stringify(angularJson, null, 2));
     return tree;
   };
 }

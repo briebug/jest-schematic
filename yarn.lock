@@ -105,7 +105,7 @@
     "@angular-devkit/core" "10.0.8"
     "@angular-devkit/schematics" "10.0.8"
 
-"@schuchard/schematics-core@0.4.0":
+"@schuchard/schematics-core@^0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@schuchard/schematics-core/-/schematics-core-0.4.0.tgz#27ac1b5578fcb7d9c8f90b75f488f7538f73eee2"
   integrity sha512-PWR/Red9+fz5y6QZtbShDeBOU9QXZh6I0Bd6xx5Cm1bBjQcjBWfAZ+s34/PyjfM/tTcJGLkunELiCn72a82WBg==

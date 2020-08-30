@@ -28,7 +28,9 @@ import { Observable, of, concat } from 'rxjs';
 import { map, concatMap } from 'rxjs/operators';
 import { TsConfigSchema } from '../interfaces/ts-config-schema';
 
-export default function(options: JestOptions): Rule {
+import { getWorkspaceConfig as gwc } from '@schuchard/schematics-core';
+
+export default function (options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
     options = { ...options, __version__: getAngularVersion(tree) };
 
@@ -88,21 +90,29 @@ function updateDependencies(): Rule {
 
 function removeFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
+    const angularProjects = parseAngularJson(gwc(tree));
+
     const deleteFiles = [
-      './src/karma.conf.js',
-      './karma.conf.js',
-      './src/test.ts',
+      'src/karma.conf.js',
+      'karma.conf.js',
+      'src/test.ts',
 
       // unable to overwrite these with the url() approach.
-      './jest.config.js',
-      './src/setup-jest.ts',
-      './src/test-config.helper.ts',
+      'jest.config.js',
+      'src/setup-jest.ts',
+      'src/test-config.helper.ts',
     ];
 
-    deleteFiles.forEach((filePath) => {
-      context.logger.debug(`removing ${filePath}`);
+    const projects = angularProjects
+      .map((p) => p.root)
+      .map((root: string) => deleteFiles.map((deletePath) => `${root}/${deletePath}`));
 
-      safeFileDelete(tree, filePath);
+    projects.forEach((paths) => {
+      paths.forEach((path) => {
+        context.logger.debug(`removing ${path}`);
+
+        safeFileDelete(tree, path);
+      });
     });
 
     return tree;
@@ -188,4 +198,25 @@ function configureTsConfig(options: JestOptions): Rule {
 
     return tree.overwrite(tsConfigPath, JSON.stringify(tsConfigContent, null, 2) + '\n');
   };
+}
+
+function parseAngularJson(json: any) {
+  const { projects } = json;
+
+  return Object.entries(projects as Record<string, any>).map(([k, v]) => {
+    const { projectType, root, sourceRoot, architect } = v;
+    const {
+      test: {
+        options: { tsConfig },
+      },
+    } = architect;
+
+    return {
+      project: k,
+      projectType,
+      root,
+      sourceRoot,
+      tsConfig,
+    };
+  });
 }

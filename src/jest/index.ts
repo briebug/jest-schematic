@@ -215,10 +215,13 @@ function configureTsConfig(options: JestOptions): Rule {
       allowJs: true,
     });
     tsConfigContent.files = tsConfigContent.files.filter(
-      (file: String) =>
+      (file: string) =>
         // remove files that match the following
         !['test.ts', 'src/test.ts'].some((testFile) => testFile === file)
     );
+    tsConfigContent.compilerOptions.types = (tsConfigContent?.compilerOptions?.types ?? [])
+      .filter((type: string) => !['jasmine'].some((jasmineType) => jasmineType === type))
+      .concat('jest');
 
     return tree.overwrite(tsConfigPath, JSON.stringify(tsConfigContent, null, 2) + '\n');
   };

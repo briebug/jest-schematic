@@ -14,7 +14,7 @@ jobs:
             - yarn-packages-v1-
       # https://circleci.com/docs/2.0/caching/#yarn-node
       - run: yarn --frozen-lockfile --cache-folder ~/.cache/yarn
-      - run: yarn test single
+      - run: yarn test workspace
       - save_cache:
           paths:
             - ~/.cache/yarn

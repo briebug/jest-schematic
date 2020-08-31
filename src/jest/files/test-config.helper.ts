@@ -7,10 +7,7 @@ type CompilerOptions = Partial<{
 }>;
 export type ConfigureFn = (testBed: typeof TestBed) => void;
 
-export const configureTests = (
-  configure: ConfigureFn,
-  compilerOptions: CompilerOptions = {}
-) => {
+export const configureTests = (configure: ConfigureFn, compilerOptions: CompilerOptions = {}) => {
   const compilerConfig: CompilerOptions = {
     preserveWhitespaces: false,
     ...compilerOptions,

@@ -7,6 +7,7 @@ import {
   apply,
   move,
   mergeWith,
+  template,
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
@@ -14,12 +15,9 @@ import {
   removePackageJsonDependency,
   JestOptions,
   safeFileDelete,
-  addPropertyToPackageJson,
-  getWorkspaceConfig,
   getAngularVersion,
   getLatestNodeVersion,
   NodePackage,
-  parseJsonAtPath,
 } from '../utility/util';
 
 import { addPackageJsonDependency, NodeDependencyType } from '../utility/dependencies';
@@ -28,7 +26,7 @@ import { Observable, of, concat } from 'rxjs';
 import { map, concatMap } from 'rxjs/operators';
 import { TsConfigSchema } from '../interfaces/ts-config-schema';
 
-import { getWorkspaceConfig as gwc } from '@schuchard/schematics-core';
+import { getWorkspaceConfig, readJsonInTree } from '@schuchard/schematics-core';
 
 export default function (options: JestOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
@@ -38,9 +36,9 @@ export default function (options: JestOptions): Rule {
       updateDependencies(),
       removeFiles(),
       updateAngularJson(),
-      addJestFiles(),
-      addTestScriptsToPackageJson(),
-      configureTsConfig(options),
+      addRootFiles(),
+      addWorkspaceFiles(),
+      configureTsConfig(),
     ])(tree, context);
   };
 }
@@ -69,12 +67,7 @@ function updateDependencies(): Rule {
       })
     );
 
-    const addDependencies = of(
-      'jest',
-      '@types/jest',
-      'jest-preset-angular',
-      '@angular-builders/jest'
-    ).pipe(
+    const addDependencies = of('jest', '@types/jest', '@angular-builders/jest').pipe(
       concatMap((packageName: string) => getLatestNodeVersion(packageName)),
       map((packageFromRegistry: NodePackage) => {
         const { name, version } = packageFromRegistry;
@@ -96,7 +89,7 @@ function updateDependencies(): Rule {
 
 function removeFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    const angularProjects = parseAngularJson(gwc(tree));
+    const angularProjects = parseAngularJson(getWorkspaceConfig(tree));
 
     const deleteFiles = [
       'src/karma.conf.js',
@@ -127,7 +120,7 @@ function removeFiles(): Rule {
 
 function updateAngularJson(): Rule {
   return (tree: Tree) => {
-    const angularJson = gwc(tree);
+    const angularJson = getWorkspaceConfig(tree);
 
     Object.entries(angularJson.projects as Record<string, any>).forEach(([_, v]) => {
       const { test } = v?.architect;
@@ -143,7 +136,7 @@ function updateAngularJson(): Rule {
   };
 }
 
-function addJestFiles(): Rule {
+function addRootFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.logger.debug('adding jest files to host dir');
 
@@ -151,79 +144,54 @@ function addJestFiles(): Rule {
   };
 }
 
-function addTestScriptsToPackageJson(): Rule {
+function addWorkspaceFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    // prettier-ignore
-    addPropertyToPackageJson(tree, context, 'scripts', {
-      'test': 'jest',
-      'test:watch': 'jest --watch'
-    });
+    context.logger.debug('adding jest files to workspace projects');
+    const { projects } = getWorkspaceConfig(tree);
 
-    addPropertyToPackageJson(tree, context, 'jest', {
-      globals: {
-        'ts-jest': {
-          tsConfig: '<rootDir>/tsconfig.spec.json',
-          stringifyContentPathRegex: '\\.html$',
-          astTransformers: {
-            before: [
-              'jest-preset-angular/build/InlineFilesTransformer',
-              'jest-preset-angular/build/StripStylesTransformer',
-            ],
-          },
-        },
-      },
-      moduleNameMapper: {
-        '@app/(.*)': '<rootDir>/src/app/$1',
-        '@assets/(.*)': '<rootDir>/src/assets/$1',
-        '@core/(.*)': '<rootDir>/src/app/core/$1',
-        '@env': '<rootDir>/src/environments/environment',
-        '@src/(.*)': '<rootDir>/src/src/$1',
-        '@state/(.*)': '<rootDir>/src/app/state/$1',
-      },
-      preset: 'jest-preset-angular',
-      roots: ['src'],
-      setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
-      snapshotSerializers: [
-        'jest-preset-angular/build/AngularSnapshotSerializer.js',
-        'jest-preset-angular/build/HTMLCommentSerializer.js',
-      ],
-      transform: {
-        '^.+\\.(ts|js|html)$': 'ts-jest',
-      },
-    });
-    return tree;
-  };
-}
-
-function configureTsConfig(options: JestOptions): Rule {
-  return (tree: Tree) => {
-    const { projectProps } = getWorkspaceConfig(tree, options);
-    const tsConfigPath = projectProps.architect.test.options.tsConfig;
-    const workplaceTsConfig = parseJsonAtPath(tree, tsConfigPath);
-
-    let tsConfigContent: TsConfigSchema;
-
-    if (workplaceTsConfig && workplaceTsConfig.value) {
-      tsConfigContent = workplaceTsConfig.value;
-    } else {
+    if (!projects || !Object.keys(projects).length) {
       return tree;
     }
 
-    tsConfigContent.compilerOptions = Object.assign(tsConfigContent.compilerOptions, {
-      module: 'commonjs',
-      emitDecoratorMetadata: true,
-      allowJs: true,
-    });
-    tsConfigContent.files = tsConfigContent.files.filter(
-      (file: string) =>
-        // remove files that match the following
-        !['test.ts', 'src/test.ts'].some((testFile) => testFile === file)
-    );
-    tsConfigContent.compilerOptions.types = (tsConfigContent?.compilerOptions?.types ?? [])
-      .filter((type: string) => !['jasmine'].some((jasmineType) => jasmineType === type))
-      .concat('jest');
+    const paths = Object.values(projects)
+      .map((proj: any) => proj?.root as string)
+      .filter((path) => !!path)
+      .map((path) => mergeWith(apply(url('./workspace-files'), [template({ path }), move(path)])));
 
-    return tree.overwrite(tsConfigPath, JSON.stringify(tsConfigContent, null, 2) + '\n');
+    return chain(paths)(tree, context);
+  };
+}
+
+function configureTsConfig(): Rule {
+  return (tree: Tree) => {
+    const angularJson = getWorkspaceConfig(tree);
+
+    Object.entries(angularJson.projects as Record<string, any>)
+      .map(([_, v]) => v?.architect?.test?.options?.tsConfig as string)
+      .forEach((path) => {
+        const json = readJsonInTree<TsConfigSchema>(tree, path);
+
+        json.compilerOptions = {
+          ...json.compilerOptions,
+          module: 'commonjs',
+          emitDecoratorMetadata: true,
+          allowJs: true,
+        };
+
+        json.files = json.files.filter(
+          (file: string) =>
+            // remove files that match the following
+            !['test.ts', 'src/test.ts'].some((testFile) => testFile === file)
+        );
+
+        json.compilerOptions.types = (json.compilerOptions?.types ?? [])
+          .filter((type: string) => !['jasmine'].some((jasmineType) => jasmineType === type))
+          .concat('jest');
+
+        tree.overwrite(path, JSON.stringify(json, null, 2) + '\n');
+      });
+
+    return tree;
   };
 }
 

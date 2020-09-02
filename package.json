@@ -66,5 +66,9 @@
     "trailingComma": "es5",
     "bracketSpacing": true,
     "arrowParens": "always"
+  },
+  "np": {
+    "anyBranch": true,
+    "test-script": "yarn test single && yarn test workspace"
   }
 }

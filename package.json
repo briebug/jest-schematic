@@ -1,26 +1,25 @@
 {
   "name": "@briebug/jest-schematic",
   "version": "2.2.0",
-  "description": "Add jest to an Angular CLI project",
+  "description": "Schematic to add jest to an Angular CLI project",
   "repository": "briebug/jest-schematic",
   "bugs": "https://github.com/briebug/jest-schematic/issues",
   "homepage": "https://github.com/briebug/jest-schematic",
   "main": "src/jest/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "build:watch": "tsc -p tsconfig.json -watch",
-    "clean": "git checkout HEAD -- sandbox && git clean -f -d sandbox",
-    "build:clean:launch": "yarn build && yarn clean && yarn launch",
-    "launch": "yarn link:sandbox && cd sandbox && yarn && ./node_modules/.bin/ng g @briebug/jest-schematic:jest",
-    "test": "yarn build:clean:launch && yarn test:sandbox && yarn clean",
-    "test:unit": "yarn build:watch && jasmine src/**/*_spec.js",
-    "test:sandbox": "cd sandbox && yarn lint && yarn test --no-cache && yarn build",
-    "link:sandbox": "yarn link && cd sandbox && yarn link @briebug/jest-schematic",
-    "debug": "echo \"debug not setup with @angular/schematics\n> node --inspect-brk $(which schematics) .:addJest\"",
+    "reset": "ts-node --project=./scripts/tsconfig.json ./scripts/e2e.ts",
+    "test": "ts-node --project=./scripts/tsconfig.json ./scripts/e2e.ts",
+    "test:single": "yarn test single",
+    "test:workspace": "yarn test workspace",
+    "test:reset": "yarn test reset",
     "release": "np"
   },
   "keywords": [
-    "schematics"
+    "schematics",
+    "jest-schematic",
+    "jest",
+    "angular"
   ],
   "author": "Briebug",
   "license": "MIT",
@@ -29,7 +28,7 @@
     "@angular-devkit/core": "^10.0.6",
     "@angular-devkit/schematics": "^10.0.6",
     "@schematics/angular": "^10.0.6",
-    "@schuchard/schematics-core": "0.4.0",
+    "@schuchard/schematics-core": "^0.4.0",
     "rxjs": "6.5.5"
   },
   "publishConfig": {
@@ -38,8 +37,38 @@
   "devDependencies": {
     "@types/jasmine": "^3.3.16",
     "@types/node": "^12.6.9",
+    "@types/shelljs": "^0.8.8",
+    "husky": "^4.2.5",
     "jasmine": "^3.4.0",
+    "lint-staged": "^10.2.13",
     "np": "^5.0.3",
-    "typescript": "^3.5.3"
+    "prettier": "^2.1.1",
+    "shelljs": "^0.8.4",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,json,md,ts}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "printWidth": 100,
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "bracketSpacing": true,
+    "arrowParens": "always"
+  },
+  "np": {
+    "anyBranch": true,
+    "test-script": "yarn test single && yarn test workspace"
   }
 }

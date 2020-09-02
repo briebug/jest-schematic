@@ -1,10 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "lib": ["es2017", "dom"],
     "declaration": true,
     "module": "commonjs",
     "moduleResolution": "node",
@@ -20,15 +17,8 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "es6",
-    "types": [
-      "jasmine",
-      "node"
-    ]
+    "types": ["jasmine", "node"]
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules", "my-project",  "src/*/files/**/*"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "src/*/files/**/*"]
 }

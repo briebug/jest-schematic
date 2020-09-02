@@ -14,8 +14,54 @@ jobs:
             - yarn-packages-v1-
       # https://circleci.com/docs/2.0/caching/#yarn-node
       - run: yarn --frozen-lockfile --cache-folder ~/.cache/yarn
-      - run: yarn test workspace
+      - run: yarn build
       - save_cache:
           paths:
             - ~/.cache/yarn
           key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+
+  test-single-app:
+    docker:
+      - image: 'circleci/node:12.9.1-browsers'
+    steps:
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1-{{ .Branch }}-
+            - yarn-packages-v1-
+      - run: yarn --frozen-lockfile --cache-folder ~/.cache/yarn
+      - run: yarn test single
+
+  test-workspace-app-lib:
+    docker:
+      - image: 'circleci/node:12.9.1-browsers'
+    steps:
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1-{{ .Branch }}-
+            - yarn-packages-v1-
+      - run: yarn --frozen-lockfile --cache-folder ~/.cache/yarn
+      - run: yarn test workspace
+
+
+workflows:
+  version: 2
+
+  build-and-test:
+    jobs:
+      - build
+
+      - test-single-app:
+          requires:
+            - build
+
+      - test-workspace-app-lib:
+          requires:
+            - build

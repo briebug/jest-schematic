@@ -7,6 +7,7 @@
   "homepage": "https://github.com/briebug/jest-schematic",
   "main": "src/jest/index.js",
   "scripts": {
+    "build": "tsc -p tsconfig.json",
     "test": "ts-node --project=./scripts/tsconfig.json ./scripts/e2e.ts",
     "test:single": "yarn test single",
     "test:workspace": "yarn test workspace",

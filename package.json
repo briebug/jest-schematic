@@ -8,9 +8,11 @@
   "main": "src/jest/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "reset": "ts-node --project=./scripts/tsconfig.json ./scripts/e2e.ts",
     "test": "ts-node --project=./scripts/tsconfig.json ./scripts/e2e.ts",
     "test:single": "yarn test single",
     "test:workspace": "yarn test workspace",
+    "test:reset": "yarn test reset",
     "release": "np"
   },
   "keywords": [

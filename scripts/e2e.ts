@@ -11,7 +11,7 @@ const build = async () => {
   return await exec('tsc -p tsconfig.json');
 };
 
-const clean = async (type: SandboxType) => {
+const reset = async (type: SandboxType) => {
   return await exec(`git checkout HEAD -- ${type} && git clean -f -d ${type}`);
 };
 
@@ -28,7 +28,12 @@ const testSchematic = async (type: SandboxType) => {
 };
 
 const launch = async () => {
-  let arg = process.argv[2] as SandboxType;
+  let arg = process.argv[2] as string;
+
+  if (arg === 'reset') {
+    await reset(SandboxType.single);
+    return await reset(SandboxType.workspace);
+  }
 
   if (!arg || !sandboxList.find((t) => t.includes(arg))) {
     return [
@@ -40,11 +45,11 @@ const launch = async () => {
   const type = SandboxType[arg];
 
   await build();
-  await clean(type);
+  await reset(type);
   await link(type);
   await runSchematic(type);
   await testSchematic(type);
-  return await clean(type);
+  return await reset(type);
 };
 
 launch()

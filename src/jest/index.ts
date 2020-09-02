@@ -89,7 +89,9 @@ function updateDependencies(): Rule {
 
 function removeFiles(): Rule {
   return (tree: Tree, context: SchematicContext) => {
-    const angularProjects = parseAngularJson(getWorkspaceConfig(tree));
+    const angularProjects = Object.values(
+      (getWorkspaceConfig(tree)?.projects as Record<string, any>) ?? {}
+    ).map((o) => o.root);
 
     const deleteFiles = [
       'src/karma.conf.js',
@@ -102,9 +104,9 @@ function removeFiles(): Rule {
       'src/test-config.helper.ts',
     ];
 
-    const projects = angularProjects
-      .map((p) => p.root)
-      .map((root: string) => deleteFiles.map((deletePath) => `${root}/${deletePath}`));
+    const projects = angularProjects.map((root: string) =>
+      deleteFiles.map((deletePath) => `${root}/${deletePath}`)
+    );
 
     projects.forEach((paths) => {
       paths.forEach((path) => {
@@ -122,8 +124,8 @@ function updateAngularJson(): Rule {
   return (tree: Tree) => {
     const angularJson = getWorkspaceConfig(tree);
 
-    Object.entries(angularJson.projects as Record<string, any>).forEach(([_, v]) => {
-      const { test } = v?.architect;
+    Object.values(angularJson.projects as Record<string, any>).forEach((o) => {
+      const { test } = o?.architect;
 
       test.builder = '@angular-builders/jest:run';
       delete test.options.main;
@@ -166,8 +168,8 @@ function configureTsConfig(): Rule {
   return (tree: Tree) => {
     const angularJson = getWorkspaceConfig(tree);
 
-    Object.entries(angularJson.projects as Record<string, any>)
-      .map(([_, v]) => v?.architect?.test?.options?.tsConfig as string)
+    Object.values(angularJson.projects as Record<string, any>)
+      .map((o) => o?.architect?.test?.options?.tsConfig as string)
       .forEach((path) => {
         const json = readJsonInTree<TsConfigSchema>(tree, path);
 
@@ -193,25 +195,4 @@ function configureTsConfig(): Rule {
 
     return tree;
   };
-}
-
-function parseAngularJson(json: any) {
-  const { projects } = json;
-
-  return Object.entries(projects as Record<string, any>).map(([k, v]) => {
-    const { projectType, root, sourceRoot, architect } = v;
-    const {
-      test: {
-        options: { tsConfig },
-      },
-    } = architect;
-
-    return {
-      project: k,
-      projectType,
-      root,
-      sourceRoot,
-      tsConfig,
-    };
-  });
 }

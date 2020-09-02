@@ -24,7 +24,7 @@ const runSchematic = async (type: SandboxType) => {
 };
 
 const testSchematic = async (type: SandboxType) => {
-  return await exec(`cd ${type} && yarn lint && yarn test --no-cache && yarn build`);
+  return await exec(`cd ${type} && yarn lint && yarn test && yarn build`);
 };
 
 const launch = async () => {

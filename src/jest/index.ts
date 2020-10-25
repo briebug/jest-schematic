@@ -127,9 +127,11 @@ function updateAngularJson(): Rule {
     Object.values(angularJson.projects as Record<string, any>).forEach((o) => {
       const { test } = o?.architect;
 
-      test.builder = '@angular-builders/jest:run';
-      delete test.options.main;
-      delete test.options.karmaConfig;
+      if (test?.builder) {
+        test.builder = '@angular-builders/jest:run';
+        delete test.options.main;
+        delete test.options.karmaConfig;
+      }
     });
 
     // todo use project formatter or an ast update strategy to avoid formatting irrelevant fields
@@ -170,6 +172,7 @@ function configureTsConfig(): Rule {
 
     Object.values(angularJson.projects as Record<string, any>)
       .map((o) => o?.architect?.test?.options?.tsConfig as string)
+      .filter((path) => !!path)
       .forEach((path) => {
         const json = readJsonInTree<TsConfigSchema>(tree, path);
 

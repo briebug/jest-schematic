@@ -4,7 +4,7 @@ module.exports = {
   ...baseConfig,
   globals: {
     'ts-jest': {
-      tsConfig: '<rootDir>/<%= path %>/tsconfig.spec.json',
+      tsconfig: '<rootDir>/<%= path %>/tsconfig.spec.json',
     },
   },
 };

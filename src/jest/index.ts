@@ -130,6 +130,8 @@ function updateAngularJson(): Rule {
       if (test?.builder) {
         test.builder = '@angular-builders/jest:run';
         delete test.options.main;
+        delete test.options.polyfills;
+        delete test.options.inlineStyleLanguage;
         delete test.options.karmaConfig;
       }
     });

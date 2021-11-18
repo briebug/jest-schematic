@@ -63,10 +63,15 @@
             "main": "projects/app-one/src/main.ts",
             "polyfills": "projects/app-one/src/polyfills.ts",
             "tsConfig": "projects/app-one/tsconfig.app.json",
-            "aot": true,
             "assets": ["projects/app-one/src/favicon.ico", "projects/app-one/src/assets"],
             "styles": ["projects/app-one/src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -96,7 +101,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",

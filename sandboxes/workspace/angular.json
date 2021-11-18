@@ -31,16 +31,6 @@
             "tsConfig": "projects/lib-one/tsconfig.spec.json",
             "karmaConfig": "projects/lib-one/karma.conf.js"
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/lib-one/tsconfig.lib.json",
-              "projects/lib-one/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
-          }
         }
       }
     },
@@ -131,17 +121,6 @@
             "assets": ["projects/app-one/src/favicon.ico", "projects/app-one/src/assets"],
             "styles": ["projects/app-one/src/styles.scss"],
             "scripts": []
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/app-one/tsconfig.app.json",
-              "projects/app-one/tsconfig.spec.json",
-              "projects/app-one/e2e/tsconfig.json"
-            ],
-            "exclude": ["**/node_modules/**"]
           }
         },
         "e2e": {

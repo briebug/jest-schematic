@@ -15,6 +15,7 @@ node_modules/
 npm-debug.log*
 yarn-error.log*
 *.todo
+.angular
 
 # Mac OSX Finder files.
 **/.DS_Store

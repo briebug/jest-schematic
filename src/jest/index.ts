@@ -53,7 +53,10 @@ function updateDependencies(): Rule {
       'karma-jasmine',
       'karma-jasmine-html-reporter',
       'karma-chrome-launcher',
-      'karma-coverage-istanbul-reporter'
+      'karma-coverage-istanbul-reporter',
+      'karma-coverage',
+      'jasmine-core',
+      '@types/jasmine'
     ).pipe(
       map((packageName: string) => {
         context.logger.debug(`Removing ${packageName} dependency`);

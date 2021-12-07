@@ -53,6 +53,7 @@ function updateDependencies(): Rule {
       'karma-jasmine',
       'karma-jasmine-html-reporter',
       'karma-chrome-launcher',
+      'karma-coverage',
       'karma-coverage-istanbul-reporter'
     ).pipe(
       map((packageName: string) => {

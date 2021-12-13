@@ -24,7 +24,8 @@ const runSchematic = async (type: SandboxType) => {
 };
 
 const testSchematic = async (type: SandboxType) => {
-  return await exec(`cd ${type} && yarn lint && yarn test && yarn build`);
+  // Remove yarn lint since in angular 13, we must add eslint but now the schematic for add eslint not works with angular 13
+  return await exec(`cd ${type} && yarn test && yarn build`);
 };
 
 const launch = async () => {

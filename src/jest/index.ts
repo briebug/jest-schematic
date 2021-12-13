@@ -53,8 +53,10 @@ function updateDependencies(): Rule {
       'karma-jasmine',
       'karma-jasmine-html-reporter',
       'karma-chrome-launcher',
+      'karma-coverage-istanbul-reporter',
       'karma-coverage',
-      'karma-coverage-istanbul-reporter'
+      'jasmine-core',
+      '@types/jasmine'
     ).pipe(
       map((packageName: string) => {
         context.logger.debug(`Removing ${packageName} dependency`);
@@ -131,6 +133,8 @@ function updateAngularJson(): Rule {
       if (test?.builder) {
         test.builder = '@angular-builders/jest:run';
         delete test.options.main;
+        delete test.options.polyfills;
+        delete test.options.inlineStyleLanguage;
         delete test.options.karmaConfig;
       }
     });

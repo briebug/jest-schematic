@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -10,7 +13,7 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/lib-one/tsconfig.lib.json",
             "project": "projects/lib-one/ng-package.json"
@@ -27,16 +30,6 @@
             "main": "projects/lib-one/src/test.ts",
             "tsConfig": "projects/lib-one/tsconfig.spec.json",
             "karmaConfig": "projects/lib-one/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/lib-one/tsconfig.lib.json",
-              "projects/lib-one/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -60,10 +53,15 @@
             "main": "projects/app-one/src/main.ts",
             "polyfills": "projects/app-one/src/polyfills.ts",
             "tsConfig": "projects/app-one/tsconfig.app.json",
-            "aot": true,
             "assets": ["projects/app-one/src/favicon.ico", "projects/app-one/src/assets"],
             "styles": ["projects/app-one/src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -76,7 +74,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -94,7 +91,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -123,17 +121,6 @@
             "assets": ["projects/app-one/src/favicon.ico", "projects/app-one/src/assets"],
             "styles": ["projects/app-one/src/styles.scss"],
             "scripts": []
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/app-one/tsconfig.app.json",
-              "projects/app-one/tsconfig.spec.json",
-              "projects/app-one/e2e/tsconfig.json"
-            ],
-            "exclude": ["**/node_modules/**"]
           }
         },
         "e2e": {

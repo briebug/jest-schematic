@@ -25,9 +25,9 @@
   "license": "MIT",
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "^10.0.6",
-    "@angular-devkit/schematics": "^10.0.6",
-    "@schematics/angular": "^10.0.6",
+    "@angular-devkit/core": "^13.1.1",
+    "@angular-devkit/schematics": "^13.1.1",
+    "@schematics/angular": "^13.1.1",
     "@schuchard/schematics-core": "^0.4.0",
     "rxjs": "6.5.5"
   },

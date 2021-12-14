@@ -2,7 +2,8 @@ version: 2
 jobs:
   build:
     docker:
-      - image: 'cimg/node:stable'
+      # https://circleci.com/developer/images/image/cimg/node
+      - image: cimg/node:lts-browsers
     steps:
       - checkout
       # Download and cache dependencies
@@ -22,7 +23,7 @@ jobs:
 
   test-single-app:
     docker:
-      - image: 'cimg/node:stable'
+      - image: cimg/node:lts-browsers
     steps:
       - checkout
       # Download and cache dependencies
@@ -37,7 +38,7 @@ jobs:
 
   test-workspace-app-lib:
     docker:
-      - image: 'cimg/node:stable'
+      - image: cimg/node:lts-browsers
     steps:
       - checkout
       # Download and cache dependencies

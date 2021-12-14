@@ -1,7 +1,6 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-
 ---
 
 **Describe the bug**
@@ -9,6 +8,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -21,11 +21,11 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. Mac, Windows]
- - Node version: [e.g. 8.11.3]
- - NPM or Yarn version [e.g. Yarn 1.3.0]
- - App type [e.g. Angular CLI, Nx Workspace]
- - Angular version [e.g. @angular/core: "6.0.3"]
+
+- OS: [e.g. Mac, Windows]
+- Node version: [e.g. 8.11.3]
+- App type [e.g. Angular CLI, Nx Workspace]
+- Angular version [e.g. @angular/core: "6.0.3"]
 
 **Additional context**
 Add any other context about the problem here.

@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: 'circleci/node:16-browsers'
+      - image: 'cimg/node:stable-browsers'
     steps:
       - checkout
       # Download and cache dependencies
@@ -22,7 +22,7 @@ jobs:
 
   test-single-app:
     docker:
-      - image: 'circleci/node:16-browsers'
+      - image: 'cimg/node:stable-browsers'
     steps:
       - checkout
       # Download and cache dependencies
@@ -37,7 +37,7 @@ jobs:
 
   test-workspace-app-lib:
     docker:
-      - image: 'circleci/node:16-browsers'
+      - image: 'cimg/node:stable-browsers'
     steps:
       - checkout
       # Download and cache dependencies

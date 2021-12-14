@@ -70,5 +70,8 @@
   "np": {
     "anyBranch": true,
     "test-script": "yarn test single && yarn test workspace"
+  },
+  "ng-add": {
+    "save": "devDependencies"
   }
 }

@@ -70,7 +70,7 @@ function updateDependencies(): Rule {
       })
     );
 
-    const addDependencies = of('jest', '@types/jest', '@angular-builders/jest').pipe(
+    const addDependencies = of('jest', '@types/jest', 'jest-preset-angular', '@angular-builders/jest').pipe(
       concatMap((packageName: string) => getLatestNodeVersion(packageName)),
       map((packageFromRegistry: NodePackage) => {
         const { name, version } = packageFromRegistry;

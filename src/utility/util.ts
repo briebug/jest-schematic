@@ -88,7 +88,7 @@ export function safeFileDelete(tree: Tree, path: string): boolean {
  * Return an optional "latest" version in case of error
  * @param packageName
  */
-export function getLatestNodeVersion(packageName: string): Promise<NodePackage> {
+export function getLatestNodeVersion([packageName, ceiling]: string[]): Promise<NodePackage> {
   const DEFAULT_VERSION = 'latest';
 
   return new Promise((resolve) => {
@@ -97,11 +97,20 @@ export function getLatestNodeVersion(packageName: string): Promise<NodePackage> 
       res.on('data', (chunk) => (rawData += chunk));
       res.on('end', () => {
         try {
-          const response = JSON.parse(rawData);
-          const version = (response && response['dist-tags']) || {};
+          console.log('rawData', rawData);
 
-          resolve(buildPackage(packageName, version.latest));
+          const response = JSON.parse(rawData);
+          const version = ceiling
+            ? Object.keys(response?.versions)
+                .filter((v) => !v.includes('-'))
+                .filter((v) => v.startsWith(ceiling))
+                .pop()
+            : (response && response['dist-tags']).latest || {};
+
+          resolve(buildPackage(packageName, version));
         } catch (e) {
+          console.log('ERROR', e);
+
           resolve(buildPackage(packageName));
         }
       });

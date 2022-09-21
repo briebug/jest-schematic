@@ -49,14 +49,16 @@ function updateDependencies(): Rule {
     context.addTask(new NodePackageInstallTask());
 
     const removeDependencies = of(
-      'karma',
-      'karma-jasmine',
-      'karma-jasmine-html-reporter',
+      '@types/jasmine',
+      'jasmine-core',
       'karma-chrome-launcher',
       'karma-coverage-istanbul-reporter',
       'karma-coverage',
-      'jasmine-core',
-      '@types/jasmine'
+      'karma-jasmine-html-reporter',
+      'karma-jasmine',
+      'karma',
+      './karma.conf.js',
+      './src/test.ts'
     ).pipe(
       map((packageName: string) => {
         context.logger.debug(`Removing ${packageName} dependency`);
@@ -70,8 +72,8 @@ function updateDependencies(): Rule {
       })
     );
 
-    const addDependencies = of('jest', '@types/jest', 'jest-preset-angular', '@angular-builders/jest').pipe(
-      concatMap((packageName: string) => getLatestNodeVersion(packageName)),
+    const addDependencies = of(['jest', '28'], ['@types/jest'], ['@angular-builders/jest']).pipe(
+      concatMap((dependency) => getLatestNodeVersion(dependency)),
       map((packageFromRegistry: NodePackage) => {
         const { name, version } = packageFromRegistry;
         context.logger.debug(`Adding ${name}:${version} to ${NodeDependencyType.Dev}`);
@@ -183,9 +185,6 @@ function configureTsConfig(): Rule {
 
         json.compilerOptions = {
           ...json.compilerOptions,
-          module: 'commonjs',
-          emitDecoratorMetadata: true,
-          allowJs: true,
         };
 
         json.files = json.files.filter(

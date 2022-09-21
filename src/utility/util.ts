@@ -97,20 +97,21 @@ export function getLatestNodeVersion([packageName, ceiling]: string[]): Promise<
       res.on('data', (chunk) => (rawData += chunk));
       res.on('end', () => {
         try {
-          console.log('rawData', rawData);
+          if (rawData) {
+            const response = JSON.parse(rawData);
+            const version = ceiling
+              ? Object.keys(response?.versions)
+                  .filter((v) => !v.includes('-'))
+                  .filter((v) => v.startsWith(ceiling))
+                  .pop()
+              : (response && response['dist-tags']).latest || {};
 
-          const response = JSON.parse(rawData);
-          const version = ceiling
-            ? Object.keys(response?.versions)
-                .filter((v) => !v.includes('-'))
-                .filter((v) => v.startsWith(ceiling))
-                .pop()
-            : (response && response['dist-tags']).latest || {};
-
-          resolve(buildPackage(packageName, version));
+            resolve(buildPackage(packageName, version));
+          } else {
+            resolve(buildPackage(packageName));
+          }
         } catch (e) {
           console.log('ERROR', e);
-
           resolve(buildPackage(packageName));
         }
       });

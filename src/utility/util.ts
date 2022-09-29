@@ -6,7 +6,7 @@ import { pkgJson, DeleteNodeDependency, getPackageJsonDependency } from './depen
 
 import { findPropertyInAstObject } from './json-utils';
 
-import { get } from 'http';
+import { get } from 'https';
 
 export interface NodePackage {
   name: string;
@@ -92,25 +92,26 @@ export function getLatestNodeVersion([packageName, ceiling]: string[]): Promise<
   const DEFAULT_VERSION = 'latest';
 
   return new Promise((resolve) => {
-    return get(`http://registry.npmjs.org/${packageName}`, (res) => {
+    return get(`https://registry.npmjs.org/${packageName}`, (res) => {
       let rawData = '';
       res.on('data', (chunk) => (rawData += chunk));
       res.on('end', () => {
         try {
-          console.log('rawData', rawData);
+          if (rawData) {
+            const response = JSON.parse(rawData);
+            const version = ceiling
+              ? Object.keys(response?.versions)
+                  .filter((v) => !v.includes('-'))
+                  .filter((v) => v.startsWith(ceiling))
+                  .pop()
+              : (response && response['dist-tags']).latest || {};
 
-          const response = JSON.parse(rawData);
-          const version = ceiling
-            ? Object.keys(response?.versions)
-                .filter((v) => !v.includes('-'))
-                .filter((v) => v.startsWith(ceiling))
-                .pop()
-            : (response && response['dist-tags']).latest || {};
-
-          resolve(buildPackage(packageName, version));
+            resolve(buildPackage(packageName, version));
+          } else {
+            resolve(buildPackage(packageName));
+          }
         } catch (e) {
           console.log('ERROR', e);
-
           resolve(buildPackage(packageName));
         }
       });

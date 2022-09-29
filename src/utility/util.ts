@@ -6,7 +6,7 @@ import { pkgJson, DeleteNodeDependency, getPackageJsonDependency } from './depen
 
 import { findPropertyInAstObject } from './json-utils';
 
-import { get } from 'http';
+import { get } from 'https';
 
 export interface NodePackage {
   name: string;
@@ -92,7 +92,7 @@ export function getLatestNodeVersion([packageName, ceiling]: string[]): Promise<
   const DEFAULT_VERSION = 'latest';
 
   return new Promise((resolve) => {
-    return get(`http://registry.npmjs.org/${packageName}`, (res) => {
+    return get(`https://registry.npmjs.org/${packageName}`, (res) => {
       let rawData = '';
       res.on('data', (chunk) => (rawData += chunk));
       res.on('end', () => {

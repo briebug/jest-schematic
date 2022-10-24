@@ -56,9 +56,7 @@ function updateDependencies(): Rule {
       'karma-coverage',
       'karma-jasmine-html-reporter',
       'karma-jasmine',
-      'karma',
-      './karma.conf.js',
-      './src/test.ts'
+      'karma'
     ).pipe(
       map((packageName: string) => {
         context.logger.debug(`Removing ${packageName} dependency`);

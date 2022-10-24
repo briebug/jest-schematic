@@ -42,7 +42,7 @@ module.exports = {
 
 ## Jest issues
 
-Issues related to jest, ts-jest, or issue with test execution may be related the version of jest and jest-preset-angular. The schematic may install a version of jest other than latest in an attempt to configure package versions that work together correctly. If you experience issues with your tests after running the schematic related to the aforementioned packages, please review the package versions and adjust them as necessary.
+Issues related to jest, ts-jest, or test execution may be related the installed version of jest and jest-preset-angular. The schematic may install a version of jest other than latest in an attempt to configure package versions that work together correctly. If you experience issues with your tests after running the schematic related to the aforementioned packages, please review the package versions and adjust them as necessary.
 
 Issues with this schematic can be filed [here](https://github.com/briebug/jest-schematic/issues/new/choose).
 

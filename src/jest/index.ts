@@ -99,7 +99,6 @@ function removeFiles(): Rule {
     const deleteFiles = [
       'src/karma.conf.js',
       'karma.conf.js',
-      'src/test.ts',
 
       // unable to overwrite these with the url() approach.
       'jest.config.js',
@@ -184,12 +183,6 @@ function configureTsConfig(): Rule {
         json.compilerOptions = {
           ...json.compilerOptions,
         };
-
-        json.files = json.files.filter(
-          (file: string) =>
-            // remove files that match the following
-            !['test.ts', 'src/test.ts'].some((testFile) => testFile === file)
-        );
 
         json.compilerOptions.types = (json.compilerOptions?.types ?? [])
           .filter((type: string) => !['jasmine'].some((jasmineType) => jasmineType === type))

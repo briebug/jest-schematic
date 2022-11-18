@@ -1,46 +1,14 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "cli": {
-    "analytics": false
-  },
   "version": 1,
+  "cli": {
+    "packageManager": "yarn"
+  },
   "newProjectRoot": "projects",
   "projects": {
-    "lib-one": {
-      "projectType": "library",
-      "root": "projects/lib-one",
-      "sourceRoot": "projects/lib-one/src",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
-          "options": {
-            "tsConfig": "projects/lib-one/tsconfig.lib.json",
-            "project": "projects/lib-one/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/lib-one/tsconfig.lib.prod.json"
-            }
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/lib-one/src/test.ts",
-            "tsConfig": "projects/lib-one/tsconfig.spec.json",
-            "karmaConfig": "projects/lib-one/karma.conf.js"
-          }
-        }
-      }
-    },
     "app-one": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
-      },
+      "schematics": {},
       "root": "projects/app-one",
       "sourceRoot": "projects/app-one/src",
       "prefix": "app",
@@ -51,59 +19,50 @@
             "outputPath": "dist/app-one",
             "index": "projects/app-one/src/index.html",
             "main": "projects/app-one/src/main.ts",
-            "polyfills": "projects/app-one/src/polyfills.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/app-one/tsconfig.app.json",
             "assets": ["projects/app-one/src/favicon.ico", "projects/app-one/src/assets"],
-            "styles": ["projects/app-one/src/styles.scss"],
-            "scripts": [],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true
+            "styles": ["projects/app-one/src/styles.css"],
+            "scripts": []
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "projects/app-one/src/environments/environment.ts",
-                  "with": "projects/app-one/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
                 }
-              ]
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           },
-          "defaultConfiguration": ""
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "app-one:build"
-          },
           "configurations": {
             "production": {
               "browserTarget": "app-one:build:production"
+            },
+            "development": {
+              "browserTarget": "app-one:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -114,29 +73,44 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/app-one/src/test.ts",
-            "polyfills": "projects/app-one/src/polyfills.ts",
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/app-one/tsconfig.spec.json",
-            "karmaConfig": "projects/app-one/karma.conf.js",
             "assets": ["projects/app-one/src/favicon.ico", "projects/app-one/src/assets"],
-            "styles": ["projects/app-one/src/styles.scss"],
+            "styles": ["projects/app-one/src/styles.css"],
             "scripts": []
           }
-        },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
+        }
+      }
+    },
+    "lib-one": {
+      "projectType": "library",
+      "root": "projects/lib-one",
+      "sourceRoot": "projects/lib-one/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "protractorConfig": "projects/app-one/e2e/protractor.conf.js",
-            "devServerTarget": "app-one:serve"
+            "project": "projects/lib-one/ng-package.json"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "app-one:serve:production"
+              "tsConfig": "projects/lib-one/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/lib-one/tsconfig.lib.json"
             }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/lib-one/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
     }
-  },
-  "defaultProject": "lib-one"
+  }
 }

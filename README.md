@@ -91,6 +91,30 @@ yarn reset
   - this will symlink the projects so that the Jest schematic command runs from you're local filesystem
 - in the local repo you want to run the schematic against, run `ng g @briebug/jest-schematic:add`
 
+### Update sandboxes
+
+When a new version of Angular is released, update all the sandbox apps and libs to the latest version.
+
+_replace `15` with the latest version of Angular_
+
+```shell
+cd sandbox
+
+rm single-app
+
+npx @angular/cli@15 new single-app --routing --style=css --skip-git --package-manager=yarn
+
+rm workspace
+
+npx @angular/cli@15 new workspace --create-application=false --skip-git --package-manager=yarn
+
+cd workspace
+
+ng g app app-one --routing --style=css --skip-git
+
+ng g lib lib-one
+```
+
 ### Dev tips
 
 For faster developing, find and comment out the following line to avoid npm installing dependencies

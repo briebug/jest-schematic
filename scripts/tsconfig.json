@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "rootDir": ".",
     "lib": ["ESNext"],
     "types": ["node"],
     "strict": false,

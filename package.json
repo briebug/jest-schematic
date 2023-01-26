@@ -1,6 +1,6 @@
 {
   "name": "@briebug/jest-schematic",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "description": "Schematic to add jest to an Angular CLI project",
   "repository": "briebug/jest-schematic",
   "bugs": "https://github.com/briebug/jest-schematic/issues",
@@ -8,7 +8,7 @@
   "main": "src/jest/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "reset": "ts-node --project=./scripts/tsconfig.json ./scripts/e2e.ts",
+    "reset": "ts-node --inspect --project=./scripts/tsconfig.json ./scripts/e2e.ts",
     "test": "ts-node --project=./scripts/tsconfig.json ./scripts/e2e.ts",
     "test:single": "yarn test single",
     "test:workspace": "yarn test workspace",
@@ -25,11 +25,11 @@
   "license": "MIT",
   "schematics": "./src/collection.json",
   "dependencies": {
-    "@angular-devkit/core": "^10.0.6",
-    "@angular-devkit/schematics": "^10.0.6",
-    "@schematics/angular": "^10.0.6",
+    "@angular-devkit/core": "^12.2.18",
+    "@angular-devkit/schematics": "^12.2.18",
+    "@schematics/angular": "^12.2.18",
     "@schuchard/schematics-core": "^0.4.0",
-    "rxjs": "6.5.5"
+    "rxjs": "6.6.7"
   },
   "publishConfig": {
     "access": "public"
@@ -44,8 +44,8 @@
     "np": "^7.6.3",
     "prettier": "^2.1.1",
     "shelljs": "^0.8.4",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.0.2"
+    "ts-node": "^10.9.1",
+    "typescript": "^4.2.0"
   },
   "husky": {
     "hooks": {
